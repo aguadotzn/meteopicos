@@ -1,48 +1,99 @@
 ---
 import { sources } from '../data/sources';
 const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <footer class="site-footer">
-  <div class="container">
-    <h2>Fuentes</h2>
-    <ul class="sources">
-      {
-        sources.map((s) => (
-          <li>
-            <a href={s.url} target="_blank" rel="noopener">{s.name}</a>
-            <span class="muted"> · {s.use}{s.license && ` (${s.license})`}</span>
-          </li>
-        ))
-      }
-    </ul>
-    <p class="muted disclaimer">
-      La información es orientativa. Antes de salir a la montaña consulta siempre la predicción
-      oficial de AEMET y valora las condiciones sobre el terreno.
-    </p>
-    <p class="muted">© {year} Meteo Picos de Europa</p>
+  <div class="container grid">
+    <div class="about">
+      <p class="name">Meteo Picos de Europa</p>
+      <p class="muted">
+        Previsión por alturas para los tres macizos: Cornión, Urrieles y Ándara, y sus valles de acceso.
+      </p>
+      <p class="disclaimer">
+        La información es orientativa. Antes de salir a la montaña consulta la predicción oficial de{' '}
+        <a href="https://www.aemet.es/es/eltiempo/prediccion/montana?w=&p=peu1" target="_blank" rel="noopener">AEMET</a>{' '}
+        y valora las condiciones sobre el terreno.
+      </p>
+      <nav class="links" aria-label="Secciones">
+        <a href={`${base}/prevision`}>Previsión</a>
+        <a href={`${base}/mapa`}>Mapa</a>
+        <a href={`${base}/picos`}>Picos</a>
+        <a href={`${base}/esqui`}>Esquí</a>
+        <a href={`${base}/boletin`}>Boletín</a>
+      </nav>
+    </div>
+
+    <div>
+      <h2>Fuentes</h2>
+      <ul class="sources">
+        {
+          sources.map((s) => (
+            <li>
+              <a href={s.url} target="_blank" rel="noopener">{s.name}</a>
+              <span class="muted"> · {s.use}{s.license && ` (${s.license})`}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </div>
+  <p class="container copy muted">© {year} Meteo Picos de Europa</p>
 </footer>
 
 <style>
   .site-footer {
-    margin-top: 48px;
-    padding: 32px 0 40px;
+    margin-top: 64px;
+    padding: 40px 0 32px;
     border-top: 1px solid var(--border);
-    font-size: 0.9rem;
+    background: var(--surface);
+    font-size: 0.88rem;
+  }
+  .grid {
+    display: grid;
+    gap: 28px;
+  }
+  .name {
+    margin: 0 0 6px;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  .about p {
+    margin: 0 0 10px;
+    max-width: 48ch;
+  }
+  .disclaimer {
+    padding: 10px 12px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 14px;
   }
   h2 {
     font-size: 1rem;
-    margin: 0 0 12px;
+    margin: 0 0 10px;
   }
   .sources {
     list-style: none;
     padding: 0;
-    margin: 0 0 20px;
+    margin: 0;
     display: grid;
-    gap: 6px;
+    gap: 5px;
   }
-  .disclaimer {
-    max-width: 60ch;
+  .copy {
+    margin-top: 28px;
+    font-size: 0.8rem;
+  }
+  @media (min-width: 900px) {
+    .grid {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: 48px;
+    }
   }
 </style>

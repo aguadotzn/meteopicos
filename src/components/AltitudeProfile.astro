@@ -277,6 +277,15 @@ const isoDefault = 2000;
     stroke: var(--muted);
     stroke-width: 1;
   }
+  /* Halo del color de fondo: la isoterma y la roca no tachan las etiquetas */
+  .band-label,
+  .band-temp,
+  .iso text {
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
   .band-label {
     fill: var(--muted);
     font: 500 10.5px var(--font);

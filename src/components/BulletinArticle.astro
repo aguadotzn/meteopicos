@@ -13,7 +13,7 @@ const { title, date, number, next, draft } = entry.data;
 
 <article class="bulletin">
   {draft && <p class="draft">Borrador · solo visible en local</p>}
-  <p class="meta muted">
+  <p class="meta">
     <span class="date">{longDate.format(date)}</span> · Boletín nº {number}
   </p>
   <h1>{title}</h1>
@@ -39,15 +39,27 @@ const { title, date, number, next, draft } = entry.data;
   }
   .meta {
     margin: 0;
-    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
   }
   .date::first-letter {
     text-transform: uppercase;
   }
   h1 {
-    margin: 4px 0 16px;
-    font-size: clamp(1.5rem, 5vw, 2.1rem);
-    line-height: 1.2;
+    margin: 6px 0 20px;
+    font-size: clamp(1.7rem, 5.5vw, 2.5rem);
+    line-height: 1.12;
+    max-width: 24ch;
+  }
+  /* Texto del boletín en serif, como una crónica; las tablas siguen en sans */
+  .prose :global(p),
+  .prose :global(li) {
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    line-height: 1.6;
   }
   .next {
     font-size: 0.9rem;

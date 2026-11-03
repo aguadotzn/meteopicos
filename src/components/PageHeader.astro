@@ -1,0 +1,53 @@
+---
+// Encabezado editorial común a las páginas interiores.
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  compact?: boolean;
+}
+const { eyebrow, title, lead, compact = false } = Astro.props;
+---
+
+<header class:list={['page-head', { compact }]}>
+  <p class="eyebrow">{eyebrow}</p>
+  <h1>{title}</h1>
+  {lead && <p class="lead">{lead}</p>}
+  <slot />
+</header>
+
+<style>
+  .page-head {
+    padding: 32px 0 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .page-head.compact {
+    padding: 0 0 12px;
+    margin-bottom: 4px;
+    border-bottom: 0;
+  }
+  .eyebrow {
+    margin: 0;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+  }
+  h1 {
+    margin: 6px 0 10px;
+    font-size: clamp(1.7rem, 5.5vw, 2.5rem);
+    line-height: 1.12;
+    max-width: 22ch;
+  }
+  .compact h1 {
+    font-size: clamp(1.5rem, 4.5vw, 1.9rem);
+  }
+  .lead {
+    max-width: 60ch;
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.02rem;
+  }
+</style>

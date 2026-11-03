@@ -8,25 +8,25 @@ const links = [
   { href: `${base}/boletin`, label: 'Boletín' },
 ];
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+// Activo también en subpáginas (p. ej. /boletin/2026-11-03).
+const isCurrent = (href: string) => current === href || current.startsWith(`${href}/`);
 ---
 
 <header class="site-header">
   <div class="container bar">
-    <a class="brand" href={`${base}/`}>
-      <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M2 26 L11 10 L16 18 L21 8 L30 26 Z" fill="currentColor" />
+    <a class="brand" href={`${base}/`} aria-label="Meteo Picos de Europa, inicio">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M2 26 L11 11 L15 17 L21 7 L30 26 Z" fill="currentColor" />
+        <path d="M18.6 11 L21 7 L23.4 11 L21.6 10 L20.4 11.2 Z" fill="var(--bg)" />
       </svg>
-      <span>Meteo Picos</span>
+      <span class="name">Meteo Picos</span>
     </a>
     <nav aria-label="Principal">
       <ul>
         {
           links.map((l) => (
             <li>
-              <a
-                href={l.href}
-                aria-current={current === l.href.replace(/\/$/, '') ? 'page' : undefined}
-              >
+              <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>
                 {l.label}
               </a>
             </li>
@@ -42,7 +42,7 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
     position: sticky;
     top: 0;
     z-index: 10;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
   }
@@ -50,49 +50,59 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    min-height: 56px;
+    gap: 4px 16px;
+    min-height: 60px;
     flex-wrap: wrap;
   }
   .brand {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: 700;
     color: var(--text);
     text-decoration: none;
   }
   .brand svg {
     color: var(--accent);
   }
+  .name {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+  }
   ul {
     display: flex;
-    gap: 4px;
+    gap: 2px;
     list-style: none;
     margin: 0;
     padding: 0;
     overflow-x: auto;
   }
+  /* Subrayado editorial en lugar de pastilla */
   nav a {
     display: block;
-    padding: 8px 10px;
-    border-radius: 8px;
+    padding: 10px 10px 8px;
     color: var(--muted);
     text-decoration: none;
     font-size: 0.95rem;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover {
+    color: var(--text);
   }
   nav a[aria-current='page'] {
-    background: var(--accent-soft);
-    color: var(--accent);
+    color: var(--text);
     font-weight: 600;
+    border-bottom-color: var(--accent);
   }
   @media (max-width: 480px) {
     .bar {
-      padding-top: 6px;
-      padding-bottom: 6px;
+      padding-top: 8px;
     }
     nav {
-      width: 100%;
+      width: calc(100% + 2 * var(--gutter));
+      margin: 0 calc(-1 * var(--gutter));
+      padding: 0 calc(var(--gutter) - 10px);
     }
     ul {
       justify-content: space-between;

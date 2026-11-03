@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
 import '../styles/explorer.css';
 import peaks from '../data/peaks.json';
 import { zones } from '../data/zones';
@@ -21,11 +22,12 @@ const count = (id: string) => peaks.filter((p) => p.massif === id).length;
     </div>
 
     <div class="panel">
-      <h1>Cumbres de más de 2.400 m</h1>
-      <p class="intro muted">
-        Las cimas de los tres macizos según OpenStreetMap. Toca una para ver su ficha y la previsión
-        en cumbre.
-      </p>
+      <PageHeader
+        compact
+        eyebrow="Picos"
+        title="Cumbres de más de 2.400 m"
+        lead="Las cimas de los tres macizos según OpenStreetMap. Toca una para ver su ficha y la previsión en cumbre."
+      />
       <dl class="stats">
         <div><dt>cimas</dt><dd>{peaks.length}</dd></div>
         {massifs.map((z) => <div><dt>{z.alias}</dt><dd>{count(z.id)}</dd></div>)}

@@ -1,20 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
 ---
 
 <Base title="Mapa" description="Mapa interactivo de los Picos de Europa: previsión por puntos, refugios, cumbres, radar y webcams.">
+  <PageHeader
+    eyebrow="Mapa"
+    title="Previsión, refugios y webcams"
+    lead="Toca un punto para ver su previsión. En el selector de capas puedes activar el radar de lluvia."
+  >
+    <p class="radar muted" data-radar-time>Radar: cargando…</p>
+  </PageHeader>
   <section class="map-page">
-    <div class="head">
-      <h1>Mapa</h1>
-      <p class="muted" data-radar-time>Radar: cargando…</p>
-    </div>
     <div id="map" class="map" role="region" aria-label="Mapa interactivo de los Picos de Europa"></div>
     <p class="legend muted">
       <span><i class="dot fc"></i>Previsión</span>
       <span>🏠 Refugio</span>
       <span>▲ Cumbre</span>
       <span>📷 Webcam</span>
-      · Usa el selector de capas (arriba a la derecha) para mostrar el radar de lluvia.
     </p>
   </section>
 </Base>
@@ -133,23 +136,11 @@ import Base from '../layouts/Base.astro';
 
 <style>
   .map-page {
-    padding: 24px 0 0;
     display: grid;
     gap: 12px;
   }
-  .head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 4px 12px;
-  }
-  h1 {
-    margin: 0;
-    font-size: clamp(1.6rem, 5vw, 2.2rem);
-  }
-  .head p {
-    margin: 0;
+  .radar {
+    margin: 10px 0 0;
     font-size: 0.85rem;
   }
   .map {

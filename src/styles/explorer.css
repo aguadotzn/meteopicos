@@ -25,11 +25,6 @@
   align-content: start;
   min-width: 0;
 }
-.explorer .panel h1 {
-  margin: 0;
-  font-size: clamp(1.5rem, 5vw, 2rem);
-  line-height: 1.15;
-}
 .explorer .intro {
   margin: 0;
   font-size: 0.92rem;
