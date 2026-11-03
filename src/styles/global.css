@@ -120,3 +120,23 @@ img {
   background: var(--accent-soft);
   border-radius: 0 8px 8px 0;
 }
+
+/* Accesibilidad */
+:focus-visible {
+  outline: 3px solid var(--sky);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -48px;
+  z-index: 100;
+  padding: 8px 12px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+}
+.skip-link:focus {
+  top: 8px;
+}

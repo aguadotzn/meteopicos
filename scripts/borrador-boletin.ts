@@ -45,7 +45,14 @@ function dayText(j: number, byZone: Record<ZoneId, PointForecast[]>, all: Day[])
     `En cotas altas (${high.map(({ p }) => p.name).join(', ')}): máximas de ${range(high.map(({ d }) => d.tMax), ' °C')} y mínimas de ${range(high.map(({ d }) => d.tMin), ' °C')}.`,
     `Isoterma de 0 °C en torno a ${meters(all[j].freezingLevel)}.`,
   ];
-  const snow = high.filter(({ d }) => d.snow >= 0.5);
+  const summits = points
+    .map((p, i) => ({ p, d: forecastPoints[i].days[j] }))
+    .filter(({ p }) => p.level === 'cumbre');
+  if (summits.length)
+    lines.push(
+      `En cumbres (${range(summits.map(({ p }) => p.altitude), ' m')}): máximas de ${range(summits.map(({ d }) => d.tMax), ' °C')}, mínimas de ${range(summits.map(({ d }) => d.tMin), ' °C')} y rachas de hasta ${r(Math.max(...summits.map(({ d }) => d.gust)))} km/h.`,
+    );
+  const snow = [...high, ...summits].filter(({ d }) => d.snow >= 0.5);
   if (snow.length) lines.push(`Nieve prevista: ${snow.map(({ p, d }) => `${r(d.snow)} cm en ${p.name}`).join(', ')}.`);
   const gust = Math.max(...forecastPoints.map((p) => p.days[j].gust));
   if (gust >= 50) lines.push(`Rachas de hasta ${r(gust)} km/h en zonas expuestas.`);

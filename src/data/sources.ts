@@ -42,6 +42,16 @@ export const sources: Source[] = [
     use: 'Radar de precipitación y satélite',
   },
   {
+    name: 'FEMPA',
+    url: 'https://fempa.net/',
+    use: 'Federación de Deportes de Montaña, Escalada y Senderismo del Principado de Asturias · refugios',
+  },
+  {
+    name: 'Mountain Forecast',
+    url: 'https://www.mountain-forecast.com/',
+    use: 'Referencia externa de previsión en cumbres (no se reutilizan sus datos)',
+  },
+  {
     name: 'Webcams de Asturias',
     url: 'https://www.webcamsdeasturias.com/',
     use: 'Webcams enlazadas en el mapa',
