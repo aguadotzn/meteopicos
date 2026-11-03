@@ -75,6 +75,7 @@ const count = (id: string) => peaks.filter((p) => p.massif === id).length;
   import { zones } from '../data/zones';
   import { createMap3D, addMarker } from '../lib/map3d';
   import { renderSpotForecast } from '../lib/spot-forecast';
+  import { wikilocUrl } from '../lib/links';
 
   type Peak = (typeof peaks)[number];
 
@@ -138,6 +139,7 @@ const count = (id: string) => peaks.filter((p) => p.massif === id).length;
     if (fly) map.flyTo({ center: [p.lon, p.lat], zoom: 13.5, pitch: 60, essential: true });
 
     const links = [
+      `<a href="${wikilocUrl(p.lat, p.lon)}" target="_blank" rel="noopener">Rutas cercanas en Wikiloc ↗</a>`,
       `<a href="https://www.openstreetmap.org/node/${p.osm}" target="_blank" rel="noopener">OpenStreetMap ↗</a>`,
       p.wikidata && `<a href="https://www.wikidata.org/wiki/${p.wikidata}" target="_blank" rel="noopener">Wikidata ↗</a>`,
     ]

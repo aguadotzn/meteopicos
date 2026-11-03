@@ -58,6 +58,11 @@ export const sources: Source[] = [
     use: 'Referencia externa de previsión en cumbres (no se reutilizan sus datos)',
   },
   {
+    name: 'Wikiloc',
+    url: 'https://es.wikiloc.com/',
+    use: 'Rutas de la comunidad (solo enlaces; no se reutilizan sus datos)',
+  },
+  {
     name: 'Webcams de Asturias',
     url: 'https://www.webcamsdeasturias.com/',
     use: 'Webcams enlazadas en el mapa',

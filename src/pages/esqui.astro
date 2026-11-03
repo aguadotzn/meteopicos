@@ -86,6 +86,7 @@ const starts = new Set(routes.map((r) => r.data.start.name)).size;
   import type { Marker } from 'maplibre-gl';
   import { createMap3D, addMarker } from '../lib/map3d';
   import { renderSpotForecast } from '../lib/spot-forecast';
+  import { wikilocUrl } from '../lib/links';
 
   interface Place {
     name: string;
@@ -187,6 +188,7 @@ const starts = new Set(routes.map((r) => r.data.start.name)).size;
         <h3>Previsión en cumbre</h3>
         <div class="spot-fc-wrap" data-fc></div>
         <p class="links">
+          <a href="${wikilocUrl(r.summit.lat, r.summit.lon)}" target="_blank" rel="noopener">Rutas cercanas en Wikiloc ↗</a>
           <a href="https://www.aemet.es/es/eltiempo/prediccion/montana?w=&p=peu1" target="_blank" rel="noopener">AEMET montaña ↗</a>
         </p>`;
       if (body) detail.querySelector('.prose')!.append(body.content.cloneNode(true));
