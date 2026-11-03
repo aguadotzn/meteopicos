@@ -37,6 +37,12 @@ export const sources: Source[] = [
     license: 'CC BY-SA',
   },
   {
+    name: 'Mapterhorn · IGN España',
+    url: 'https://mapterhorn.com/attribution',
+    use: 'Relieve 3D (MDT02 © IGN España)',
+    license: 'CC BY 4.0',
+  },
+  {
     name: 'RainViewer',
     url: 'https://www.rainviewer.com/',
     use: 'Radar de precipitación y satélite',

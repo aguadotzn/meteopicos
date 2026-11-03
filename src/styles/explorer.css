@@ -1,0 +1,315 @@
+/* Diseño compartido por las secciones con mapa 3D + lista (Picos, Esquí). */
+.explorer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding-top: 20px;
+}
+/* minmax(0, 1fr): la tabla de previsión no debe ensanchar la rejilla en móvil */
+.explorer .map-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+}
+.explorer .map3d {
+  height: 52svh;
+  min-height: 320px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.explorer .panel {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  min-width: 0;
+}
+.explorer .panel h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  line-height: 1.15;
+}
+.explorer .intro {
+  margin: 0;
+  font-size: 0.92rem;
+}
+.explorer .stats {
+  display: flex;
+  gap: 18px;
+  margin: 0;
+}
+.explorer .stats div {
+  display: grid;
+}
+.explorer .stats dt {
+  order: 2;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.explorer .stats dd {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+.explorer .controls {
+  display: grid;
+  gap: 8px;
+}
+.explorer .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.explorer .chips button {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.explorer .chips button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.explorer .row {
+  display: flex;
+  gap: 8px;
+}
+.explorer input,
+.explorer select {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+.explorer .count {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.explorer .list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.explorer .list button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 10px;
+  align-items: baseline;
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.explorer .list button[aria-current='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.explorer .list .name {
+  font-weight: 600;
+}
+.explorer .list .sub {
+  grid-column: 1;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.explorer .list .num {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.explorer .detail h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.explorer .detail .sub {
+  margin: 2px 0 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.explorer .detail .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+}
+.explorer .detail .close {
+  float: right;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.explorer .facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.explorer .facts div {
+  display: grid;
+}
+.explorer .facts dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.explorer .facts dd {
+  margin: 0;
+  font-weight: 600;
+}
+.explorer .badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #f3e3b5;
+  color: #6b4e00;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.spot-fc-wrap {
+  overflow-x: auto;
+}
+.spot-fc {
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  width: 100%;
+}
+.spot-fc th,
+.spot-fc td {
+  padding: 5px 6px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+.spot-fc thead th {
+  border-top: 0;
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+.spot-fc tbody th {
+  text-transform: capitalize;
+}
+.spot-fc .pp {
+  color: var(--sky);
+}
+.fc-note {
+  font-size: 0.78rem;
+  margin: 6px 0 0;
+}
+
+/* Marcadores del mapa 3D */
+.m3d {
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  font: 600 11px/1.1 var(--font);
+  color: #1d2321;
+}
+.m3d.peak {
+  display: grid;
+  justify-items: center;
+}
+.m3d.peak i {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 12px solid #7a4b2a;
+  filter: drop-shadow(0 0 1px #fff);
+}
+.m3d.peak span {
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 0.85);
+  white-space: nowrap;
+  display: none;
+}
+.zoomed .m3d.peak.top span,
+.m3d.peak.selected span,
+.m3d.peak:hover span {
+  display: block;
+}
+.m3d.peak.selected i {
+  border-bottom-color: #c0392b;
+  transform: scale(1.4);
+}
+.m3d.start {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+}
+.m3d.route {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #3b6ea5;
+  white-space: nowrap;
+}
+.m3d.route.selected {
+  border-color: #c0392b;
+  background: #fdecea;
+}
+
+@media (min-width: 900px) {
+  .explorer {
+    grid-template-columns: 360px minmax(0, 1fr);
+    align-items: start;
+  }
+  .explorer .panel {
+    order: -1;
+    max-height: calc(100svh - 100px);
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .explorer .map-wrap {
+    position: sticky;
+    top: 72px;
+  }
+  .explorer .map3d {
+    height: calc(100svh - 120px);
+  }
+  .explorer .detail {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    width: min(420px, calc(100% - 24px));
+    max-height: 60%;
+    overflow-y: auto;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.2);
+  }
+}
+
+.explorer .detail h3 {
+  font-size: 0.95rem;
+  margin: 14px 0 6px;
+}
+.explorer .detail .prose {
+  font-size: 0.9rem;
+}

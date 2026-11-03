@@ -1,0 +1,201 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/explorer.css';
+import peaks from '../data/peaks.json';
+import { zones } from '../data/zones';
+
+const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+const massifs = zones.filter((z) => z.id !== 'valles');
+const massifName = Object.fromEntries(massifs.map((z) => [z.id, z.alias]));
+const count = (id: string) => peaks.filter((p) => p.massif === id).length;
+---
+
+<Base
+  title="Picos"
+  description={`Las ${peaks.length} cumbres de más de 2.400 m de los Picos de Europa en un mapa 3D, con previsión en cumbre.`}
+>
+  <section class="explorer" data-peaks-page>
+    <div class="map-wrap">
+      <div class="map3d" data-map role="region" aria-label="Mapa 3D de las cumbres"></div>
+      <article class="card detail" data-detail hidden aria-live="polite"></article>
+    </div>
+
+    <div class="panel">
+      <h1>Cumbres de más de 2.400 m</h1>
+      <p class="intro muted">
+        Las cimas de los tres macizos según OpenStreetMap. Toca una para ver su ficha y la previsión
+        en cumbre.
+      </p>
+      <dl class="stats">
+        <div><dt>cimas</dt><dd>{peaks.length}</dd></div>
+        {massifs.map((z) => <div><dt>{z.alias}</dt><dd>{count(z.id)}</dd></div>)}
+      </dl>
+
+      <div class="controls">
+        <div class="chips" role="group" aria-label="Filtrar por macizo">
+          <button type="button" data-massif="" aria-pressed="true">Todos</button>
+          {massifs.map((z) => <button type="button" data-massif={z.id} aria-pressed="false">{z.alias}</button>)}
+        </div>
+        <div class="row">
+          <label class="visually-hidden" for="q">Buscar cumbre</label>
+          <input id="q" type="search" placeholder="Buscar cumbre…" data-search />
+          <label class="visually-hidden" for="sort">Ordenar</label>
+          <select id="sort" data-sort>
+            <option value="alt">Por altitud</option>
+            <option value="name">Alfabético</option>
+            <option value="massif">Por macizo</option>
+          </select>
+        </div>
+        <p class="count muted" data-count>{peaks.length} cimas</p>
+      </div>
+
+      <ol class="list" data-list>
+        {
+          peaks.map((p, i) => (
+            <li data-id={p.id} data-massif={p.massif} data-name={p.name} data-alt={p.altitude}>
+              <button type="button" data-select={p.id}>
+                <span class="name">{p.name}</span>
+                <span class="sub">
+                  {massifName[p.massif]}
+                  {p.altName && ` · ${p.altName}`}
+                </span>
+                <span class="num">{fmt.format(p.altitude)} m</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import type { Marker } from 'maplibre-gl';
+  import peaks from '../data/peaks.json';
+  import { zones } from '../data/zones';
+  import { createMap3D, addMarker } from '../lib/map3d';
+  import { renderSpotForecast } from '../lib/spot-forecast';
+
+  type Peak = (typeof peaks)[number];
+
+  const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+  const massifName = Object.fromEntries(zones.map((z) => [z.id, `${z.name} (${z.alias})`]));
+  const $ = <T extends Element>(s: string) => document.querySelector<T>(s)!;
+
+  const list = $<HTMLOListElement>('[data-list]');
+  const detail = $<HTMLElement>('[data-detail]');
+  const items = new Map([...list.querySelectorAll<HTMLLIElement>('li')].map((li) => [li.dataset.id!, li]));
+  const markers = new Map<string, Marker>();
+  const state = { massif: '', q: '', sort: 'alt', selected: '' };
+
+  const lons = peaks.map((p) => p.lon);
+  const lats = peaks.map((p) => p.lat);
+  const map = createMap3D($('[data-map]'), [
+    [Math.min(...lons), Math.min(...lats)],
+    [Math.max(...lons), Math.max(...lats)],
+  ]);
+  // Con zoom suficiente se etiquetan las 12 más altas; el resto al pasar el ratón o seleccionarlas.
+  peaks.forEach((p, i) =>
+    markers.set(
+      p.id,
+      addMarker(map, {
+        lon: p.lon,
+        lat: p.lat,
+        html: `<i></i><span>${p.name} · ${fmt.format(p.altitude)}</span>`,
+        className: `peak${i < 12 ? ' top' : ''}`,
+        label: `${p.name}, ${fmt.format(p.altitude)} m`,
+        onClick: () => select(p.id, false),
+      }),
+    ),
+  );
+
+  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  function apply() {
+    const visible = peaks.filter(
+      (p) => (!state.massif || p.massif === state.massif) && (!state.q || norm(`${p.name} ${p.altName ?? ''}`).includes(state.q)),
+    );
+    const order = [...visible].sort((a, b) =>
+      state.sort === 'name'
+        ? a.name.localeCompare(b.name, 'es')
+        : state.sort === 'massif'
+          ? a.massif.localeCompare(b.massif) || b.altitude - a.altitude
+          : b.altitude - a.altitude,
+    );
+    const ids = new Set(visible.map((p) => p.id));
+    for (const [id, li] of items) li.hidden = !ids.has(id);
+    order.forEach((p) => list.append(items.get(p.id)!));
+    for (const [id, m] of markers) m.getElement().style.display = ids.has(id) ? '' : 'none';
+    $('[data-count]').textContent = `${visible.length} ${visible.length === 1 ? 'cima' : 'cimas'}`;
+  }
+
+  function select(id: string, fly = true) {
+    const p = peaks.find((x) => x.id === id) as Peak | undefined;
+    if (!p) return;
+    state.selected = id;
+    for (const [mid, m] of markers) m.getElement().classList.toggle('selected', mid === id);
+    for (const [lid, li] of items) li.querySelector('button')!.setAttribute('aria-current', String(lid === id));
+    if (fly) map.flyTo({ center: [p.lon, p.lat], zoom: 13.5, pitch: 60, essential: true });
+
+    const links = [
+      `<a href="https://www.openstreetmap.org/node/${p.osm}" target="_blank" rel="noopener">OpenStreetMap ↗</a>`,
+      p.wikidata && `<a href="https://www.wikidata.org/wiki/${p.wikidata}" target="_blank" rel="noopener">Wikidata ↗</a>`,
+    ]
+      .filter(Boolean)
+      .join('');
+    detail.innerHTML = `
+      <button type="button" class="close" aria-label="Cerrar ficha" data-close>×</button>
+      <h2>${p.name}</h2>
+      <p class="sub">${massifName[p.massif]}${p.altName ? ` · también ${p.altName}` : ''}</p>
+      <dl class="facts">
+        <div><dt>Altitud</dt><dd>${fmt.format(p.altitude)} m</dd></div>
+        <div><dt>Coordenadas</dt><dd>${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}</dd></div>
+      </dl>
+      <div class="spot-fc-wrap" data-fc></div>
+      <p class="links">${links}</p>`;
+    detail.hidden = false;
+    renderSpotForecast(detail.querySelector('[data-fc]')!, p);
+    history.replaceState(null, '', `#${id}`);
+  }
+
+  detail.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('[data-close]')) return;
+    detail.hidden = true;
+    state.selected = '';
+    for (const m of markers.values()) m.getElement().classList.remove('selected');
+    for (const li of items.values()) li.querySelector('button')!.setAttribute('aria-current', 'false');
+    history.replaceState(null, '', location.pathname);
+  });
+
+  list.addEventListener('click', (e) => {
+    const id = (e.target as HTMLElement).closest<HTMLElement>('[data-select]')?.dataset.select;
+    if (id) {
+      select(id);
+      if (matchMedia('(max-width: 899px)').matches) $('[data-map]').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-massif]').forEach((b) =>
+    b.addEventListener('click', () => {
+      state.massif = b.dataset.massif!;
+      document.querySelectorAll('[data-massif]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      apply();
+    }),
+  );
+  $<HTMLInputElement>('[data-search]').addEventListener('input', (e) => {
+    state.q = norm((e.target as HTMLInputElement).value.trim());
+    apply();
+  });
+  $<HTMLSelectElement>('[data-sort]').addEventListener('change', (e) => {
+    state.sort = (e.target as HTMLSelectElement).value;
+    apply();
+  });
+
+  // Enlaces directos a una cumbre: /picos#torre-cerredo
+  const fromHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (id && id !== state.selected) select(id);
+  };
+  map.once('load', fromHash);
+  window.addEventListener('hashchange', fromHash);
+</script>

@@ -17,6 +17,11 @@ npm run build    # genera dist/
 3. Con `npm run dev` se ven los borradores marcados como «Borrador».
 4. Cambia a `draft: false`, haz commit y push para publicarlo.
 
+## Picos y esquí
+
+- `npm run picos:osm` regenera `src/data/peaks.json` con las cumbres de más de 2.400 m de OpenStreetMap.
+- Las rutas de esquí están en `src/content/rutas/*.md`. Salida y cima llevan coordenadas y altitud de OSM; dificultad, orientación y descripción las completa quien las revisa. Con `draft: true` solo se ven en `npm run dev`.
+
 ## Despliegue
 
 Cada push a `main` publica en GitHub Pages mediante `.github/workflows/deploy.yml`.

@@ -55,27 +55,46 @@ function dailyFreezing(hourly: ApiLocation['hourly'], date: string): number | nu
   return values.reduce((a, b) => a + b, 0) / values.length;
 }
 
-function parse(points: Point[], data: ApiLocation | ApiLocation[]): PointForecast[] {
+function parseDays(data: ApiLocation | ApiLocation[]): Day[][] {
   const locations = Array.isArray(data) ? data : [data];
-  return locations.map((loc, i) => {
+  return locations.map((loc) => {
     const d = loc.daily;
     const num = (key: string, j: number) => d[key]?.[j] ?? 0;
-    return {
-      point: points[i],
-      days: d.time.map((date, j) => ({
-        date,
-        code: num('weather_code', j),
-        tMax: num('temperature_2m_max', j),
-        tMin: num('temperature_2m_min', j),
-        precip: num('precipitation_sum', j),
-        precipProb: num('precipitation_probability_max', j),
-        snow: num('snowfall_sum', j),
-        gust: num('wind_gusts_10m_max', j),
-        windDir: num('wind_direction_10m_dominant', j),
-        freezingLevel: dailyFreezing(loc.hourly, date),
-      })),
-    };
+    return d.time.map((date, j) => ({
+      date,
+      code: num('weather_code', j),
+      tMax: num('temperature_2m_max', j),
+      tMin: num('temperature_2m_min', j),
+      precip: num('precipitation_sum', j),
+      precipProb: num('precipitation_probability_max', j),
+      snow: num('snowfall_sum', j),
+      gust: num('wind_gusts_10m_max', j),
+      windDir: num('wind_direction_10m_dominant', j),
+      freezingLevel: dailyFreezing(loc.hourly, date),
+    }));
   });
+}
+
+export interface Spot {
+  lat: number;
+  lon: number;
+  altitude: number;
+}
+
+// Una petición a Open-Meteo para varios puntos a la vez.
+async function request(spots: Spot[], days: number): Promise<Day[][]> {
+  const params = new URLSearchParams({
+    latitude: spots.map((p) => p.lat).join(','),
+    longitude: spots.map((p) => p.lon).join(','),
+    elevation: spots.map((p) => p.altitude).join(','),
+    daily: DAILY,
+    hourly: 'freezing_level_height',
+    timezone: 'Europe/Madrid',
+    forecast_days: String(days),
+  });
+  const res = await fetch(`${API}?${params}`);
+  if (!res.ok) throw new Error(`Open-Meteo ${res.status}`);
+  return parseDays(await res.json());
 }
 
 function readCache(): Forecast | null {
@@ -105,20 +124,22 @@ export async function getForecast(points: Point[]): Promise<Forecast> {
     return cached;
   }
 
-  const params = new URLSearchParams({
-    latitude: points.map((p) => p.lat).join(','),
-    longitude: points.map((p) => p.lon).join(','),
-    elevation: points.map((p) => p.altitude).join(','),
-    daily: DAILY,
-    hourly: 'freezing_level_height',
-    timezone: 'Europe/Madrid',
-    forecast_days: String(DAYS),
-  });
-  const res = await fetch(`${API}?${params}`);
-  if (!res.ok) throw new Error(`Open-Meteo ${res.status}`);
-  const forecast: Forecast = { fetchedAt: Date.now(), points: parse(points, await res.json()) };
+  const days = await request(points, DAYS);
+  const forecast: Forecast = { fetchedAt: Date.now(), points: points.map((point, i) => ({ point, days: days[i] })) };
   writeCache(forecast);
   return forecast;
+}
+
+// Previsión de un único punto (cumbre, ruta…) pedida a demanda; se guarda en memoria.
+const spotCache = new Map<string, Promise<Day[]>>();
+export function getSpotForecast(spot: Spot, days = 3): Promise<Day[]> {
+  const key = `${spot.lat},${spot.lon},${spot.altitude},${days}`;
+  if (!spotCache.has(key)) {
+    const p = request([spot], days).then((r) => r[0]);
+    p.catch(() => spotCache.delete(key));
+    spotCache.set(key, p);
+  }
+  return spotCache.get(key)!;
 }
 
 // Resumen de un grupo de puntos por día: máxima más alta, mínima más baja,

@@ -7,6 +7,8 @@ export const GET: APIRoute = async ({ site }) => {
   const urls = [
     { path: '/', lastmod: undefined },
     { path: '/mapa/', lastmod: undefined },
+    { path: '/picos/', lastmod: undefined },
+    { path: '/esqui/', lastmod: undefined },
     { path: '/boletin/', lastmod: bulletins[0]?.data.date },
     ...bulletins.map((b) => ({ path: `/boletin/${b.id}/`, lastmod: b.data.date })),
   ];

@@ -1,0 +1,620 @@
+[
+  {
+    "id": "torre-cerredo",
+    "name": "Torre Cerredo",
+    "altName": "Torrecerredo",
+    "altitude": 2649,
+    "lat": 43.19776,
+    "lon": -4.85287,
+    "massif": "urrieles",
+    "osm": 948414574,
+    "wikidata": "Q1520376"
+  },
+  {
+    "id": "torre-de-llambrion",
+    "name": "Torre de Llambrión",
+    "altitude": 2647,
+    "lat": 43.17327,
+    "lon": -4.85695,
+    "massif": "urrieles",
+    "osm": 1250024849,
+    "wikidata": "Q3331402"
+  },
+  {
+    "id": "tiro-tirso",
+    "name": "Tiro Tirso",
+    "altitude": 2639,
+    "lat": 43.17262,
+    "lon": -4.85466,
+    "massif": "urrieles",
+    "osm": 4685155691,
+    "wikidata": "Q8538483"
+  },
+  {
+    "id": "torre-blanca",
+    "name": "Torre Blanca",
+    "altitude": 2617,
+    "lat": 43.17276,
+    "lon": -4.85167,
+    "massif": "urrieles",
+    "osm": 4685155689,
+    "wikidata": "Q6150053"
+  },
+  {
+    "id": "pena-vieja",
+    "name": "Peña Vieja",
+    "altitude": 2614,
+    "lat": 43.17404,
+    "lon": -4.8101,
+    "massif": "urrieles",
+    "osm": 129961981,
+    "wikidata": "Q8538492"
+  },
+  {
+    "id": "torre-casiano-de-prado",
+    "name": "Torre Casiano de Prado",
+    "altitude": 2613,
+    "lat": 43.1713,
+    "lon": -4.8582,
+    "massif": "urrieles",
+    "osm": 4685155692,
+    "wikidata": "Q6150071"
+  },
+  {
+    "id": "torre-de-la-palanca",
+    "name": "Torre de la Palanca",
+    "altitude": 2609,
+    "lat": 43.17841,
+    "lon": -4.86097,
+    "massif": "urrieles",
+    "osm": 4685155710
+  },
+  {
+    "id": "torre-de-las-llastrias",
+    "name": "Torre de las Llastrias",
+    "altitude": 2603,
+    "lat": 43.17565,
+    "lon": -4.85691,
+    "massif": "urrieles",
+    "osm": 4685155712,
+    "wikidata": "Q10972420"
+  },
+  {
+    "id": "tiro-navarro-sur",
+    "name": "Tiro Navarro Sur",
+    "altitude": 2602,
+    "lat": 43.18273,
+    "lon": -4.81717,
+    "massif": "urrieles",
+    "osm": 6524101747
+  },
+  {
+    "id": "pico-de-santa-ana-occidental",
+    "name": "Pico de Santa Ana Occidental",
+    "altName": "Pico de Santa Ana I",
+    "altitude": 2602,
+    "lat": 43.17953,
+    "lon": -4.8207,
+    "massif": "urrieles",
+    "osm": 6524101749,
+    "wikidata": "Q6075089"
+  },
+  {
+    "id": "tiro-navarro-norte",
+    "name": "Tiro Navarro Norte",
+    "altitude": 2601,
+    "lat": 43.18395,
+    "lon": -4.81691,
+    "massif": "urrieles",
+    "osm": 6524232542,
+    "wikidata": "Q6150683"
+  },
+  {
+    "id": "tiro-navarro-central",
+    "name": "Tiro Navarro Central",
+    "altitude": 2600,
+    "lat": 43.18327,
+    "lon": -4.8166,
+    "massif": "urrieles",
+    "osm": 1260541794,
+    "wikidata": "Q6150685"
+  },
+  {
+    "id": "torre-bermeja",
+    "name": "Torre Bermeja",
+    "altitude": 2598,
+    "lat": 43.19577,
+    "lon": -4.85281,
+    "massif": "urrieles",
+    "osm": 3378380444
+  },
+  {
+    "id": "pena-santa",
+    "name": "Peña Santa",
+    "altName": "Torre Santa",
+    "altitude": 2596,
+    "lat": 43.20192,
+    "lon": -4.96228,
+    "massif": "cornion",
+    "osm": 1250040422,
+    "wikidata": "Q2645930"
+  },
+  {
+    "id": "pico-de-santa-ana-oriental",
+    "name": "Pico de Santa Ana Oriental",
+    "altName": "Pico de Santa Ana II",
+    "altitude": 2596,
+    "lat": 43.17917,
+    "lon": -4.8192,
+    "massif": "urrieles",
+    "osm": 1260541373,
+    "wikidata": "Q6075092"
+  },
+  {
+    "id": "torre-del-hoyo-grande",
+    "name": "Torre del Hoyo Grande",
+    "altitude": 2596,
+    "lat": 43.17654,
+    "lon": -4.85614,
+    "massif": "urrieles",
+    "osm": 6512199943,
+    "wikidata": "Q6150655"
+  },
+  {
+    "id": "torre-sin-nombre",
+    "name": "Torre sin Nombre",
+    "altitude": 2591,
+    "lat": 43.17279,
+    "lon": -4.85238,
+    "massif": "urrieles",
+    "osm": 4685155690,
+    "wikidata": "Q8538488"
+  },
+  {
+    "id": "torre-de-la-pardida",
+    "name": "Torre de la Párdida",
+    "altitude": 2584,
+    "lat": 43.1992,
+    "lon": -4.83989,
+    "massif": "urrieles",
+    "osm": 3378367242
+  },
+  {
+    "id": "tiro-del-oso",
+    "name": "Tiro del Oso",
+    "altitude": 2576,
+    "lat": 43.19337,
+    "lon": -4.84544,
+    "massif": "urrieles",
+    "osm": 1260556921,
+    "wikidata": "Q5556535"
+  },
+  {
+    "id": "torre-de-coello",
+    "name": "Torre de Coello",
+    "altitude": 2573,
+    "lat": 43.19303,
+    "lon": -4.84944,
+    "massif": "urrieles",
+    "osm": 3378375906
+  },
+  {
+    "id": "los-campanarios",
+    "name": "Los Campanarios",
+    "altitude": 2571,
+    "lat": 43.18882,
+    "lon": -4.82067,
+    "massif": "urrieles",
+    "osm": 3865723849
+  },
+  {
+    "id": "pico-tesorero",
+    "name": "Pico Tesorero",
+    "altitude": 2564,
+    "lat": 43.18078,
+    "lon": -4.84102,
+    "massif": "urrieles",
+    "osm": 31866258,
+    "wikidata": "Q8538497"
+  },
+  {
+    "id": "tiro-llago",
+    "name": "Tiro Llago",
+    "altitude": 2561,
+    "lat": 43.17046,
+    "lon": -4.84669,
+    "massif": "urrieles",
+    "osm": 7244469231
+  },
+  {
+    "id": "pico-de-los-cabrones",
+    "name": "Pico de los Cabrones",
+    "altitude": 2558,
+    "lat": 43.20306,
+    "lon": -4.85641,
+    "massif": "urrieles",
+    "osm": 1260545622,
+    "wikidata": "Q6075124"
+  },
+  {
+    "id": "neveron-de-urriellu",
+    "name": "Neverón de Urriellu",
+    "altitude": 2555,
+    "lat": 43.20454,
+    "lon": -4.83578,
+    "massif": "urrieles",
+    "osm": 1260549713,
+    "wikidata": "Q6041417"
+  },
+  {
+    "id": "la-morra",
+    "name": "La Morra",
+    "altitude": 2554,
+    "lat": 43.19247,
+    "lon": -4.81788,
+    "massif": "urrieles",
+    "osm": 1260545866
+  },
+  {
+    "id": "torre-diego-mella",
+    "name": "Torre Diego Mella",
+    "altitude": 2535,
+    "lat": 43.17922,
+    "lon": -4.86498,
+    "massif": "urrieles",
+    "osm": 4685155709
+  },
+  {
+    "id": "aguja-la-canalona",
+    "name": "Aguja La Canalona",
+    "altitude": 2531,
+    "lat": 43.1779,
+    "lon": -4.81836,
+    "massif": "urrieles",
+    "osm": 2393645156,
+    "wikidata": "Q5660424"
+  },
+  {
+    "id": "picu-urriellu",
+    "name": "Picu Urriellu",
+    "altName": "Naranjo de Bulnes",
+    "altitude": 2518,
+    "lat": 43.20083,
+    "lon": -4.8177,
+    "massif": "urrieles",
+    "osm": 129959999,
+    "wikidata": "Q2636482"
+  },
+  {
+    "id": "pico-boada",
+    "name": "Pico Boada",
+    "altitude": 2514,
+    "lat": 43.19605,
+    "lon": -4.84139,
+    "massif": "urrieles",
+    "osm": 3378375907
+  },
+  {
+    "id": "torre-labrouche",
+    "name": "Torre Labrouche",
+    "altitude": 2514,
+    "lat": 43.19989,
+    "lon": -4.85034,
+    "massif": "urrieles",
+    "osm": 5485901987
+  },
+  {
+    "id": "pico-arenizas",
+    "name": "Pico Arenizas",
+    "altitude": 2512,
+    "lat": 43.18859,
+    "lon": -4.83958,
+    "massif": "urrieles",
+    "osm": 1260550186
+  },
+  {
+    "id": "pico-madejuno",
+    "name": "Pico Madejuno",
+    "altitude": 2509,
+    "lat": 43.16856,
+    "lon": -4.84155,
+    "massif": "urrieles",
+    "osm": 197751731,
+    "wikidata": "Q6075005"
+  },
+  {
+    "id": "aguja-bustamente",
+    "name": "Aguja Bustamente",
+    "altitude": 2504,
+    "lat": 43.17828,
+    "lon": -4.82338,
+    "massif": "urrieles",
+    "osm": 7179356864
+  },
+  {
+    "id": "torre-de-los-horcados-rojos",
+    "name": "Torre de los Horcados Rojos",
+    "altitude": 2503,
+    "lat": 43.17888,
+    "lon": -4.82978,
+    "massif": "urrieles",
+    "osm": 6524101754,
+    "wikidata": "Q8538504"
+  },
+  {
+    "id": "penas-urrieles",
+    "name": "Peñas Urrieles",
+    "altitude": 2486,
+    "lat": 43.18126,
+    "lon": -4.83778,
+    "massif": "urrieles",
+    "osm": 11917265029
+  },
+  {
+    "id": "torre-de-santa-maria",
+    "name": "Torre de Santa María",
+    "altitude": 2485,
+    "lat": 43.21247,
+    "lon": -4.97449,
+    "massif": "cornion",
+    "osm": 2792723985,
+    "wikidata": "Q9088939"
+  },
+  {
+    "id": "torre-delgado-ubeda",
+    "name": "Torre Delgado Úbeda",
+    "altitude": 2485,
+    "lat": 43.17768,
+    "lon": -4.86616,
+    "massif": "urrieles",
+    "osm": 4685155708
+  },
+  {
+    "id": "torre-de-las-minas-de-carbon",
+    "name": "Torre de las Minas de Carbón",
+    "altitude": 2483,
+    "lat": 43.16867,
+    "lon": -4.85759,
+    "massif": "urrieles",
+    "osm": 4685155694
+  },
+  {
+    "id": "torre-de-llordes",
+    "name": "Torre de Llordes",
+    "altitude": 2477,
+    "lat": 43.15087,
+    "lon": -4.86572,
+    "massif": "urrieles",
+    "osm": 1250022248
+  },
+  {
+    "id": "torre-penalba",
+    "name": "Torre Peñalba",
+    "altitude": 2466,
+    "lat": 43.1766,
+    "lon": -4.86695,
+    "massif": "urrieles",
+    "osm": 687464126,
+    "wikidata": "Q112667129"
+  },
+  {
+    "id": "torre-del-oso",
+    "name": "Torre del Oso",
+    "altitude": 2464,
+    "lat": 43.1961,
+    "lon": -4.8116,
+    "massif": "urrieles",
+    "osm": 3865723847
+  },
+  {
+    "id": "torre-de-enmedio",
+    "name": "Torre de Enmedio",
+    "altitude": 2459,
+    "lat": 43.2086,
+    "lon": -4.97498,
+    "massif": "cornion",
+    "osm": 2792722748
+  },
+  {
+    "id": "torre-de-la-celada",
+    "name": "Torre de la Celada",
+    "altitude": 2459,
+    "lat": 43.18627,
+    "lon": -4.87077,
+    "massif": "urrieles",
+    "osm": 4685165892
+  },
+  {
+    "id": "torre-de-la-horcada",
+    "name": "Torre de la Horcada",
+    "altitude": 2455,
+    "lat": 43.21034,
+    "lon": -4.97581,
+    "massif": "cornion",
+    "osm": 3378322099
+  },
+  {
+    "id": "torre-de-las-coteras-rojas",
+    "name": "Torre de las Coteras Rojas",
+    "altitude": 2453,
+    "lat": 43.17491,
+    "lon": -4.81576,
+    "massif": "urrieles",
+    "osm": 6522622650
+  },
+  {
+    "id": "torre-de-las-colladetas",
+    "name": "Torre de las Colladetas",
+    "altitude": 2451,
+    "lat": 43.19407,
+    "lon": -4.81325,
+    "massif": "urrieles",
+    "osm": 3865723848
+  },
+  {
+    "id": "torre-de-salinas",
+    "name": "Torre de Salinas",
+    "altitude": 2447,
+    "lat": 43.14857,
+    "lon": -4.86073,
+    "massif": "urrieles",
+    "osm": 1250040405,
+    "wikidata": "Q110934260"
+  },
+  {
+    "id": "friero",
+    "name": "Friero",
+    "altitude": 2445,
+    "lat": 43.15731,
+    "lon": -4.87521,
+    "massif": "urrieles",
+    "osm": 763189053
+  },
+  {
+    "id": "morra-de-lechugales",
+    "name": "Morra de Lechugales",
+    "altitude": 2444,
+    "lat": 43.19018,
+    "lon": -4.7338,
+    "massif": "andara",
+    "osm": 26864015,
+    "wikidata": "Q6024395"
+  },
+  {
+    "id": "aguja-jose-de-prado",
+    "name": "Aguja José de Prado",
+    "altitude": 2443,
+    "lat": 43.20048,
+    "lon": -4.96288,
+    "massif": "cornion",
+    "osm": 5489057689
+  },
+  {
+    "id": "pena-castil",
+    "name": "Peña Castil",
+    "altitude": 2439,
+    "lat": 43.2025,
+    "lon": -4.80196,
+    "massif": "urrieles",
+    "osm": 1260544736
+  },
+  {
+    "id": "silla-caballo-cimero",
+    "name": "Silla Caballo Cimero",
+    "altitude": 2434,
+    "lat": 43.19074,
+    "lon": -4.72946,
+    "massif": "andara",
+    "osm": 5747958238
+  },
+  {
+    "id": "neveron-del-albo",
+    "name": "Neverón del Albo",
+    "altitude": 2434,
+    "lat": 43.2134,
+    "lon": -4.83775,
+    "massif": "urrieles",
+    "osm": 6527873506
+  },
+  {
+    "id": "pico-del-albo",
+    "name": "Pico del Albo",
+    "altitude": 2431,
+    "lat": 43.21488,
+    "lon": -4.83913,
+    "massif": "urrieles",
+    "osm": 1260545010
+  },
+  {
+    "id": "torre-del-hoyo-oscuro",
+    "name": "Torre del Hoyo Oscuro",
+    "altitude": 2430,
+    "lat": 43.16605,
+    "lon": -4.83747,
+    "massif": "urrieles",
+    "osm": 4684957915,
+    "wikidata": "Q110856378"
+  },
+  {
+    "id": "torre-del-carnizoso",
+    "name": "Torre del Carnizoso",
+    "altitude": 2429,
+    "lat": 43.19899,
+    "lon": -4.80978,
+    "massif": "urrieles",
+    "osm": 3865712807
+  },
+  {
+    "id": "pica-del-jierru",
+    "name": "Pica del Jierru",
+    "altitude": 2425,
+    "lat": 43.19425,
+    "lon": -4.73349,
+    "massif": "andara",
+    "osm": 12347748689
+  },
+  {
+    "id": "torres-areneras",
+    "name": "Torres Areneras",
+    "altitude": 2421,
+    "lat": 43.21161,
+    "lon": -4.8389,
+    "massif": "urrieles",
+    "osm": 6527873510
+  },
+  {
+    "id": "torres-de-cebolleda",
+    "name": "Torres de Cebolleda",
+    "altitude": 2419,
+    "lat": 43.21291,
+    "lon": -4.97767,
+    "massif": "cornion",
+    "osm": 4709831342
+  },
+  {
+    "id": "cuchallon-de-villasobrada",
+    "name": "Cuchallón de Villasobrada",
+    "altitude": 2415,
+    "lat": 43.19256,
+    "lon": -4.80882,
+    "massif": "urrieles",
+    "osm": 3865723850
+  },
+  {
+    "id": "el-torco",
+    "name": "El Torco",
+    "altitude": 2413,
+    "lat": 43.20207,
+    "lon": -4.97059,
+    "massif": "cornion",
+    "osm": 6258416140
+  },
+  {
+    "id": "pena-olvidada",
+    "name": "Peña Olvidada",
+    "altitude": 2406,
+    "lat": 43.16623,
+    "lon": -4.80711,
+    "massif": "urrieles",
+    "osm": 699739398,
+    "wikidata": "Q8538623"
+  },
+  {
+    "id": "torre-de-olavarria",
+    "name": "Torre de Olavarría",
+    "altitude": 2406,
+    "lat": 43.15214,
+    "lon": -4.86362,
+    "massif": "urrieles",
+    "osm": 10845757750
+  },
+  {
+    "id": "cueto-albo",
+    "name": "Cueto Albo",
+    "altitude": 2402,
+    "lat": 43.21581,
+    "lon": -4.83931,
+    "massif": "urrieles",
+    "osm": 6527873503
+  }
+]

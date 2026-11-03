@@ -40,7 +40,7 @@ export const points: Point[] = [
   { id: 'sotres', name: 'Sotres', zone: 'urrieles', level: 'media', lat: 43.233, lon: -4.749, altitude: 1047 },
   { id: 'urriellu', name: 'Refugio de Urriellu', zone: 'urrieles', level: 'alta', lat: 43.2027, lon: -4.8213, altitude: 1953 },
   { id: 'fuente-de', name: 'Fuente Dé', zone: 'urrieles', level: 'media', lat: 43.1452, lon: -4.8105, altitude: 1078 },
-  { id: 'el-cable', name: 'El Cable (teleférico)', zone: 'urrieles', level: 'alta', lat: 43.161, lon: -4.802, altitude: 1834 },
+  { id: 'el-cable', name: 'El Cable (teleférico)', zone: 'urrieles', level: 'alta', lat: 43.1535, lon: -4.8054, altitude: 1823 },
   { id: 'torre-cerredo', name: 'Torre Cerredo', zone: 'urrieles', level: 'cumbre', lat: 43.1978, lon: -4.8529, altitude: 2649 },
   { id: 'pena-vieja', name: 'Peña Vieja', zone: 'urrieles', level: 'cumbre', lat: 43.174, lon: -4.8101, altitude: 2614 },
   { id: 'picu-urriellu', name: 'Picu Urriellu', zone: 'urrieles', level: 'cumbre', lat: 43.2008, lon: -4.8177, altitude: 2518 },

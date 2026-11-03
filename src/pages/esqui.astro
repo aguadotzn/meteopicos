@@ -1,0 +1,230 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import '../styles/explorer.css';
+import { getRoutes } from '../lib/bulletins';
+import { zones } from '../data/zones';
+
+const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+const routes = await getRoutes();
+const bodies = await Promise.all(routes.map(async (r) => ({ id: r.id, Content: (await render(r)).Content })));
+const massifName = Object.fromEntries(zones.map((z) => [z.id, z.alias]));
+const typeName = { cima: 'Cima', circular: 'Circular', travesia: 'Travesía' } as const;
+const data = routes.map((r) => ({ id: r.id, ...r.data }));
+const starts = new Set(routes.map((r) => r.data.start.name)).size;
+---
+
+<Base title="Esquí de montaña" description="Rutas de esquí de montaña en los Picos de Europa sobre un mapa 3D, con previsión en cumbre.">
+  {
+    routes.length === 0 ? (
+      <section class="explorer">
+        <div class="panel">
+          <h1>Esquí de montaña</h1>
+          <p class="card muted">Las rutas están en preparación. Vuelve pronto.</p>
+        </div>
+      </section>
+    ) : (
+      <section class="explorer">
+        <div class="map-wrap">
+          <div class="map3d" data-map role="region" aria-label="Mapa 3D de rutas de esquí" />
+          <article class="card detail" data-detail hidden aria-live="polite" />
+        </div>
+
+        <div class="panel">
+          <h1>Esquí de montaña</h1>
+          <p class="intro muted">
+            Rutas clásicas con su salida y su cima. Los itinerarios no llevan trazado: consulta siempre
+            el estado de la nieve y el riesgo de aludes antes de salir.
+          </p>
+          <dl class="stats">
+            <div><dt>rutas</dt><dd>{routes.length}</dd></div>
+            <div><dt>salidas</dt><dd>{starts}</dd></div>
+          </dl>
+
+          <div class="controls">
+            <div class="row">
+              <label class="visually-hidden" for="sort">Ordenar</label>
+              <select id="sort" data-sort>
+                <option value="ascent">Por desnivel</option>
+                <option value="alt">Por altitud de cima</option>
+                <option value="name">Alfabético</option>
+              </select>
+            </div>
+          </div>
+
+          <ol class="list" data-list>
+            {routes.map((r) => (
+              <li data-id={r.id}>
+                <button type="button" data-select={r.id}>
+                  <span class="name">{r.data.title}</span>
+                  <span class="sub">
+                    {typeName[r.data.type]} · {r.data.summit.name} · {fmt.format(r.data.summit.altitude)} m
+                    {r.data.draft && ' · borrador'}
+                  </span>
+                  <span class="num">{fmt.format(r.data.ascent)} m</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <p class="muted intro">
+            Desnivel: diferencia entre salida y cima. Macizo: {[...new Set(routes.map((r) => massifName[r.data.massif]))].join(', ')}.
+          </p>
+        </div>
+
+        {bodies.map(({ id, Content }) => (
+          <template data-body={id}>
+            <Content />
+          </template>
+        ))}
+        <script type="application/json" data-routes set:html={JSON.stringify(data)} />
+      </section>
+    )
+  }
+</Base>
+
+<script>
+  import type { Marker } from 'maplibre-gl';
+  import { createMap3D, addMarker } from '../lib/map3d';
+  import { renderSpotForecast } from '../lib/spot-forecast';
+
+  interface Place {
+    name: string;
+    lat: number;
+    lon: number;
+    altitude: number;
+  }
+  interface Route {
+    id: string;
+    title: string;
+    type: 'cima' | 'circular' | 'travesia';
+    start: Place;
+    summit: Place;
+    ascent: number;
+    difficulty?: string | null;
+    orientation?: string | null;
+    season?: string | null;
+    access?: string | null;
+    draft: boolean;
+  }
+
+  const json = document.querySelector('[data-routes]');
+  if (json) init(JSON.parse(json.textContent!) as Route[]);
+
+  function init(routes: Route[]) {
+    const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+    const $ = <T extends Element>(s: string) => document.querySelector<T>(s)!;
+    const list = $<HTMLOListElement>('[data-list]');
+    const detail = $<HTMLElement>('[data-detail]');
+    const items = new Map([...list.querySelectorAll<HTMLLIElement>('li')].map((li) => [li.dataset.id!, li]));
+    const markers = new Map<string, Marker>();
+    let selected = '';
+
+    const all = routes.flatMap((r) => [r.start, r.summit]);
+    const pad = 0.01;
+    const map = createMap3D($('[data-map]'), [
+      [Math.min(...all.map((p) => p.lon)) - pad, Math.min(...all.map((p) => p.lat)) - pad],
+      [Math.max(...all.map((p) => p.lon)) + pad, Math.max(...all.map((p) => p.lat)) + pad],
+    ]);
+
+    // Una marca por salida (varias rutas pueden compartirla) y una por cima.
+    const seen = new Set<string>();
+    for (const r of routes) {
+      if (!seen.has(r.start.name)) {
+        seen.add(r.start.name);
+        addMarker(map, {
+          lon: r.start.lon,
+          lat: r.start.lat,
+          html: `Salida · ${fmt.format(r.start.altitude)} m`,
+          className: 'start',
+          label: `Salida: ${r.start.name}`,
+        });
+      }
+      markers.set(
+        r.id,
+        addMarker(map, {
+          lon: r.summit.lon,
+          lat: r.summit.lat,
+          html: `${r.summit.name} · ${fmt.format(r.summit.altitude)}`,
+          className: 'route',
+          label: r.title,
+          onClick: () => select(r.id, false),
+        }),
+      );
+    }
+
+    const fact = (label: string, value?: string | null) =>
+      `<div><dt>${label}</dt><dd>${value ? value : '<span class="muted">Pendiente</span>'}</dd></div>`;
+
+    function select(id: string, fly = true) {
+      const r = routes.find((x) => x.id === id);
+      if (!r) return;
+      selected = id;
+      for (const [mid, m] of markers) m.getElement().classList.toggle('selected', mid === id);
+      for (const [lid, li] of items) li.querySelector('button')!.setAttribute('aria-current', String(lid === id));
+      if (fly)
+        map.fitBounds(
+          [
+            [Math.min(r.start.lon, r.summit.lon), Math.min(r.start.lat, r.summit.lat)],
+            [Math.max(r.start.lon, r.summit.lon), Math.max(r.start.lat, r.summit.lat)],
+          ],
+          { padding: 70, pitch: 60, maxZoom: 14 },
+        );
+      const body = document.querySelector<HTMLTemplateElement>(`[data-body="${id}"]`);
+      detail.innerHTML = `
+        <button type="button" class="close" aria-label="Cerrar ficha" data-close>×</button>
+        ${r.draft ? '<p><span class="badge">Borrador · solo visible en local</span></p>' : ''}
+        <h2>${r.title}</h2>
+        <p class="sub">Salida: ${r.start.name}</p>
+        <dl class="facts">
+          ${fact('Cima', `${r.summit.name} · ${fmt.format(r.summit.altitude)} m`)}
+          ${fact('Desnivel', `${fmt.format(r.ascent)} m`)}
+          ${fact('Dificultad', r.difficulty)}
+          ${fact('Orientación', r.orientation)}
+          ${fact('Época', r.season)}
+        </dl>
+        ${r.access ? `<p class="muted">${r.access}</p>` : ''}
+        <div class="prose"></div>
+        <h3>Previsión en cumbre</h3>
+        <div class="spot-fc-wrap" data-fc></div>
+        <p class="links">
+          <a href="https://www.aemet.es/es/eltiempo/prediccion/montana?w=&p=peu1" target="_blank" rel="noopener">AEMET montaña ↗</a>
+        </p>`;
+      if (body) detail.querySelector('.prose')!.append(body.content.cloneNode(true));
+      detail.hidden = false;
+      renderSpotForecast(detail.querySelector('[data-fc]')!, r.summit);
+      history.replaceState(null, '', `#${id}`);
+    }
+
+    detail.addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('[data-close]')) return;
+      detail.hidden = true;
+      selected = '';
+      for (const m of markers.values()) m.getElement().classList.remove('selected');
+      for (const li of items.values()) li.querySelector('button')!.setAttribute('aria-current', 'false');
+      history.replaceState(null, '', location.pathname);
+    });
+
+    list.addEventListener('click', (e) => {
+      const id = (e.target as HTMLElement).closest<HTMLElement>('[data-select]')?.dataset.select;
+      if (!id) return;
+      select(id);
+      if (matchMedia('(max-width: 899px)').matches) $('[data-map]').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    $<HTMLSelectElement>('[data-sort]').addEventListener('change', (e) => {
+      const by = (e.target as HTMLSelectElement).value;
+      [...routes]
+        .sort((a, b) =>
+          by === 'name' ? a.title.localeCompare(b.title, 'es') : by === 'alt' ? b.summit.altitude - a.summit.altitude : b.ascent - a.ascent,
+        )
+        .forEach((r) => list.append(items.get(r.id)!));
+    });
+
+    const fromHash = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      if (id && id !== selected) select(id);
+    };
+    map.once('load', fromHash);
+    window.addEventListener('hashchange', fromHash);
+  }
+</script>

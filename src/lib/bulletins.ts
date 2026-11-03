@@ -13,3 +13,9 @@ export const longDate = new Intl.DateTimeFormat('es-ES', {
   year: 'numeric',
   timeZone: 'Europe/Madrid',
 });
+
+// Rutas de esquí: en desarrollo también los borradores.
+export async function getRoutes() {
+  const all = await getCollection('rutas', ({ data }) => import.meta.env.DEV || !data.draft);
+  return all.sort((a, b) => b.data.ascent - a.data.ascent);
+}
