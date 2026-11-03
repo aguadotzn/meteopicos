@@ -6,6 +6,7 @@ export const GET: APIRoute = async ({ site }) => {
   const bulletins = await getBulletins();
   const urls = [
     { path: '/', lastmod: undefined },
+    { path: '/prevision/', lastmod: undefined },
     { path: '/mapa/', lastmod: undefined },
     { path: '/picos/', lastmod: undefined },
     { path: '/esqui/', lastmod: undefined },

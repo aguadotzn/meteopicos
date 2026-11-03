@@ -1,4 +1,6 @@
 /* Paleta minimalista: piedra caliza, verde de puerto, azul de cielo */
+@import '@fontsource-variable/source-serif-4/wght.css';
+
 :root {
   --bg: #f6f5f2;
   --surface: #ffffff;
@@ -8,11 +10,16 @@
   --accent: #2f6b55;
   --accent-soft: #e4efe9;
   --sky: #3b6ea5;
+  /* Perfil de montaña de la portada */
+  --rock: #c9c4b8;
+  --rock-dark: #a49d8f;
+  --frost: #e8f0f8;
 
   --radius: 12px;
   --gutter: 16px;
   --max: 1080px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,6 +32,9 @@
     --accent: #6fbf9d;
     --accent-soft: #1f2e28;
     --sky: #7fa9d8;
+    --rock: #3a403d;
+    --rock-dark: #4d5551;
+    --frost: #1e2a36;
   }
 }
 
@@ -49,6 +59,15 @@ body {
 
 a {
   color: var(--accent);
+}
+
+/* Titulares editoriales */
+h1,
+h2,
+.serif {
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 img {
