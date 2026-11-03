@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  text: string;
+}
+const { title, text } = Astro.props;
+---
+
+<section class="soon">
+  <h1>{title}</h1>
+  <p class="card muted">{text}</p>
+</section>
+
+<style>
+  .soon {
+    padding: 40px 0;
+  }
+  h1 {
+    margin: 0 0 16px;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+  }
+</style>

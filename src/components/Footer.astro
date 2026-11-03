@@ -1,0 +1,48 @@
+---
+import { sources } from '../data/sources';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <h2>Fuentes</h2>
+    <ul class="sources">
+      {
+        sources.map((s) => (
+          <li>
+            <a href={s.url} target="_blank" rel="noopener">{s.name}</a>
+            <span class="muted"> · {s.use}{s.license && ` (${s.license})`}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="muted disclaimer">
+      La información es orientativa. Antes de salir a la montaña consulta siempre la predicción
+      oficial de AEMET y valora las condiciones sobre el terreno.
+    </p>
+    <p class="muted">© {year} Meteo Picos de Europa</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 48px;
+    padding: 32px 0 40px;
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  h2 {
+    font-size: 1rem;
+    margin: 0 0 12px;
+  }
+  .sources {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    display: grid;
+    gap: 6px;
+  }
+  .disclaimer {
+    max-width: 60ch;
+  }
+</style>

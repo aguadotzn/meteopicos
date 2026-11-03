@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+
+const zones = [
+  { name: 'Macizo Occidental', alias: 'Cornión', places: 'Lagos de Covadonga · Vegarredonda · Vega de Ariñero' },
+  { name: 'Macizo Central', alias: 'Urrieles', places: 'Bulnes · Sotres · Urriellu · Fuente Dé' },
+  { name: 'Macizo Oriental', alias: 'Ándara', places: 'Tresviso · Áliva · Peña Vieja' },
+  { name: 'Valles de acceso', alias: 'Valles', places: 'Cangas de Onís · Arenas de Cabrales · Potes · Posada de Valdeón' },
+];
+---
+
+<Base>
+  <section class="hero">
+    <p class="eyebrow">Picos de Europa</p>
+    <h1>El tiempo en los tres macizos</h1>
+    <p class="muted lead">
+      Previsión por zonas y altitudes, mapas interactivos y boletines para planificar tus salidas
+      a la montaña.
+    </p>
+  </section>
+
+  <section aria-labelledby="zonas">
+    <h2 id="zonas">Zonas</h2>
+    <ul class="zones">
+      {
+        zones.map((z) => (
+          <li class="card">
+            <p class="alias">{z.alias}</p>
+            <h3>{z.name}</h3>
+            <p class="muted">{z.places}</p>
+            <p class="pending">Previsión en vivo próximamente</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding: 40px 0 24px;
+  }
+  .eyebrow {
+    margin: 0;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+  }
+  h1 {
+    margin: 4px 0 12px;
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    line-height: 1.15;
+  }
+  .lead {
+    max-width: 55ch;
+    margin: 0;
+  }
+  h2 {
+    font-size: 1.2rem;
+    margin: 24px 0 12px;
+  }
+  .zones {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .zones h3 {
+    margin: 0 0 6px;
+    font-size: 1.05rem;
+  }
+  .zones p {
+    margin: 0;
+  }
+  .alias {
+    color: var(--sky);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .pending {
+    margin-top: 12px !important;
+    font-size: 0.85rem;
+    color: var(--muted);
+    border-top: 1px dashed var(--border);
+    padding-top: 10px;
+  }
+</style>
