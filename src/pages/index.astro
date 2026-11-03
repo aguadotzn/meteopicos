@@ -1,8 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { zones, pointsByZone, levelLabel } from '../data/zones';
-
-const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+import Forecast from '../components/Forecast.astro';
 ---
 
 <Base>
@@ -15,30 +13,7 @@ const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
     </p>
   </section>
 
-  <section aria-labelledby="zonas">
-    <h2 id="zonas">Zonas</h2>
-    <ul class="zones">
-      {
-        zones.map((z) => (
-          <li class="card">
-            <p class="alias">{z.alias}</p>
-            <h3>{z.name}</h3>
-            <ul class="points">
-              {pointsByZone(z.id).map((p) => (
-                <li>
-                  <span>{p.name}</span>
-                  <span class="alt" title={levelLabel[p.level]}>
-                    {fmt.format(p.altitude)} m
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p class="pending">Previsión en vivo próximamente</p>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+  <Forecast />
 </Base>
 
 <style>
@@ -61,54 +36,5 @@ const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
   .lead {
     max-width: 55ch;
     margin: 0;
-  }
-  h2 {
-    font-size: 1.2rem;
-    margin: 24px 0 12px;
-  }
-  .zones {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  }
-  .zones h3 {
-    margin: 0 0 8px;
-    font-size: 1.05rem;
-  }
-  .zones p {
-    margin: 0;
-  }
-  .alias {
-    color: var(--sky);
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-  .points {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 4px;
-    font-size: 0.92rem;
-  }
-  .points li {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .alt {
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-  .pending {
-    margin-top: 12px !important;
-    font-size: 0.85rem;
-    color: var(--muted);
-    border-top: 1px dashed var(--border);
-    padding-top: 10px;
   }
 </style>

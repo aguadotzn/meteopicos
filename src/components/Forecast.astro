@@ -1,0 +1,299 @@
+---
+import { zones, pointsByZone } from '../data/zones';
+
+const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+---
+
+<section class="forecast" aria-labelledby="f-title">
+  <div class="head">
+    <h2 id="f-title">Próximos 6 días · valles</h2>
+    <p class="status muted" data-status>Cargando previsión…</p>
+  </div>
+  <ol class="strip" data-strip aria-live="polite"></ol>
+  <p class="freezing muted" data-freezing></p>
+
+  {
+    zones.map((z) => (
+      <article class="card zone" data-zone={z.id}>
+        <header>
+          <p class="alias">{z.alias}</p>
+          <h3>{z.name}</h3>
+        </header>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr data-days>
+                <th scope="col">Punto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pointsByZone(z.id).map((p) => (
+                <tr data-point={p.id}>
+                  <th scope="row">
+                    {p.name}
+                    <span class="alt">{fmt.format(p.altitude)} m</span>
+                  </th>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    ))
+  }
+
+  <p class="legend muted">
+    Máx/mín en °C a la altitud de cada punto · % = probabilidad de precipitación · ❄ = nieve
+    acumulada · 💨 = rachas ≥ 50 km/h. Previsión numérica orientativa de Open-Meteo.
+  </p>
+  <noscript>
+    <p class="card">
+      La previsión necesita JavaScript. Consulta la predicción de montaña de
+      <a href="https://www.aemet.es/es/eltiempo/prediccion/montana?w=&p=peu1">AEMET para Picos de Europa</a>.
+    </p>
+  </noscript>
+</section>
+
+<script>
+  import { points, pointsByZone, zones } from '../data/zones';
+  import { getForecast, summarize, type Day } from '../lib/forecast';
+  import { wmo } from '../lib/wmo';
+
+  const $ = <T extends Element>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel);
+  const fmtNum = new Intl.NumberFormat('es-ES', { useGrouping: 'always', maximumFractionDigits: 0 });
+  const weekday = new Intl.DateTimeFormat('es-ES', { weekday: 'short', timeZone: 'UTC' });
+  const dayMonth = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  const time = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+  const asDate = (iso: string) => new Date(`${iso}T12:00:00Z`);
+  const deg = (v: number) => `${Math.round(v)}°`;
+  const round100 = (v: number) => fmtNum.format(Math.round(v / 100) * 100);
+
+  function extras(d: Day) {
+    const out: string[] = [];
+    if (d.snow >= 0.5) out.push(`<span class="snow">❄ ${Math.round(d.snow)} cm</span>`);
+    if (d.gust >= 50) out.push(`<span class="gust">💨 ${Math.round(d.gust)}</span>`);
+    return out.join(' ');
+  }
+
+  function dayCard(d: Day, i: number) {
+    const w = wmo(d.code);
+    const date = asDate(d.date);
+    return `<li class="day${i === 0 ? ' today' : ''}">
+      <span class="wd">${i === 0 ? 'Hoy' : weekday.format(date)}</span>
+      <span class="dm">${dayMonth.format(date)}</span>
+      <span class="ic" role="img" aria-label="${w.label}">${w.icon}</span>
+      <span class="t"><b>${deg(d.tMax)}</b>/${deg(d.tMin)}</span>
+      <span class="pp">${d.precipProb}%</span>
+      <span class="lbl">${w.label}</span>
+    </li>`;
+  }
+
+  function cell(d: Day) {
+    const w = wmo(d.code);
+    return `<td title="${w.label}">
+      <span class="ic" role="img" aria-label="${w.label}">${w.icon}</span>
+      <span class="t"><b>${deg(d.tMax)}</b>/${deg(d.tMin)}</span>
+      <span class="pp">${d.precipProb}%</span>
+      ${extras(d)}
+    </td>`;
+  }
+
+  async function render() {
+    const status = $('[data-status]')!;
+    try {
+      const forecast = await getForecast(points);
+      const byId = new Map(forecast.points.map((p) => [p.point.id, p]));
+
+      const valleys = summarize(forecast.points.filter((p) => p.point.zone === 'valles'));
+      $('[data-strip]')!.innerHTML = valleys.map(dayCard).join('');
+
+      const all = summarize(forecast.points);
+      $('[data-freezing]')!.innerHTML =
+        '<b>Isoterma 0 °C</b> (media diurna): ' +
+        all
+          .map((d, i) => `${i === 0 ? 'hoy' : weekday.format(asDate(d.date))} ~${d.freezingLevel == null ? '—' : round100(d.freezingLevel)} m`)
+          .join(' · ');
+
+      const dayHeads = all
+        .map((d, i) => `<th scope="col">${i === 0 ? 'Hoy' : weekday.format(asDate(d.date))}<span>${dayMonth.format(asDate(d.date))}</span></th>`)
+        .join('');
+
+      for (const z of zones) {
+        const article = $(`[data-zone="${z.id}"]`)!;
+        $('[data-days]', article)!.insertAdjacentHTML('beforeend', dayHeads);
+        for (const p of pointsByZone(z.id)) {
+          const pf = byId.get(p.id);
+          if (pf) $(`[data-point="${p.id}"]`, article)!.insertAdjacentHTML('beforeend', pf.days.map(cell).join(''));
+        }
+      }
+
+      status.textContent = `Actualizado ${time.format(forecast.fetchedAt)} · Open-Meteo`;
+    } catch (err) {
+      console.error(err);
+      status.innerHTML =
+        'No se ha podido cargar la previsión. Consulta <a href="https://www.aemet.es/es/eltiempo/prediccion/montana?w=&p=peu1">AEMET montaña</a>.';
+    }
+  }
+
+  render();
+</script>
+
+<style>
+  .forecast {
+    display: grid;
+    gap: 16px;
+  }
+  /* Evita que la tabla ancha estire la rejilla y desborde la página en móvil */
+  .forecast > * {
+    min-width: 0;
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+  }
+  h2 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .status {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  .strip {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .strip :global(.day) {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 6px;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+  .strip :global(.today) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .strip :global(.wd) {
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+  .strip :global(.dm),
+  .strip :global(.lbl) {
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+  .strip :global(.ic) {
+    font-size: 1.6rem;
+    line-height: 1.3;
+  }
+  .strip :global(.pp) {
+    color: var(--sky);
+    font-size: 0.8rem;
+  }
+  @media (max-width: 640px) {
+    .strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .freezing {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .zone header {
+    margin-bottom: 8px;
+  }
+  .zone h3 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+  .alias {
+    margin: 0;
+    color: var(--sky);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .scroll {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+  table {
+    border-collapse: collapse;
+    width: max-content;
+    min-width: 100%;
+    font-size: 0.85rem;
+  }
+  /* Las celdas de días se insertan desde el script: necesitan :global */
+  .zone :global(th),
+  .zone :global(td) {
+    padding: 8px 5px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    vertical-align: top;
+  }
+  .zone :global(thead th) {
+    border-top: 0;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+  .zone :global(thead th:first-child) {
+    text-align: left;
+  }
+  .zone :global(thead th span) {
+    text-transform: none;
+    display: block;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.75rem;
+  }
+  tbody th {
+    text-align: left;
+    font-weight: 600;
+    position: sticky;
+    left: 0;
+    background: var(--surface);
+    min-width: 112px;
+    max-width: 140px;
+  }
+  .alt {
+    display: block;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.75rem;
+  }
+  .zone :global(td) :global(span) {
+    display: block;
+  }
+  .zone :global(td .ic) {
+    font-size: 1.25rem;
+  }
+  .zone :global(td .pp) {
+    color: var(--sky);
+    font-size: 0.75rem;
+  }
+  .zone :global(td .snow),
+  .zone :global(td .gust) {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .legend {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+</style>
