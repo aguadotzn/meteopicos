@@ -1,6 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import Forecast from '../components/Forecast.astro';
+import { getBulletins, longDate } from '../lib/bulletins';
+
+const [latest] = await getBulletins();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Base>
@@ -12,6 +16,19 @@ import Forecast from '../components/Forecast.astro';
       a la montaña.
     </p>
   </section>
+
+  {
+    latest && (
+      <a class="card teaser" href={`${base}/boletin`}>
+        <span class="meta muted">
+          Boletín nº {latest.data.number} · {longDate.format(latest.data.date)}
+        </span>
+        <strong>{latest.data.title}</strong>
+        <span>{latest.data.summary}</span>
+        <span class="more">Leer boletín →</span>
+      </a>
+    )
+  }
 
   <Forecast />
 </Base>
@@ -36,5 +53,21 @@ import Forecast from '../components/Forecast.astro';
   .lead {
     max-width: 55ch;
     margin: 0;
+  }
+  .teaser {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 24px;
+    color: var(--text);
+    text-decoration: none;
+    border-left: 4px solid var(--accent);
+  }
+  .teaser .meta {
+    font-size: 0.85rem;
+  }
+  .teaser .more {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.9rem;
   }
 </style>

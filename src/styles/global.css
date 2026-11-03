@@ -82,3 +82,41 @@ img {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Texto de boletines (Markdown) */
+.prose {
+  max-width: 70ch;
+}
+.prose h2 {
+  font-size: 1.15rem;
+  margin: 28px 0 8px;
+}
+.prose h3 {
+  font-size: 1rem;
+  margin: 20px 0 6px;
+}
+.prose p,
+.prose ul {
+  margin: 0 0 12px;
+}
+.prose table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin: 12px 0 16px;
+}
+.prose th,
+.prose td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+.prose blockquote {
+  margin: 12px 0;
+  padding: 8px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 8px 8px 0;
+}

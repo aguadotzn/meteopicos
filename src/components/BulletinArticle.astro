@@ -1,0 +1,57 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { longDate } from '../lib/bulletins';
+
+interface Props {
+  entry: CollectionEntry<'boletines'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, date, number, next, draft } = entry.data;
+---
+
+<article class="bulletin">
+  {draft && <p class="draft">Borrador · solo visible en local</p>}
+  <p class="meta muted">
+    <span class="date">{longDate.format(date)}</span> · Boletín nº {number}
+  </p>
+  <h1>{title}</h1>
+  <div class="prose">
+    <Content />
+  </div>
+  {next && <p class="next muted">Próxima actualización: {longDate.format(next)}</p>}
+</article>
+
+<style>
+  .bulletin {
+    padding: 24px 0 0;
+  }
+  .draft {
+    display: inline-block;
+    margin: 0 0 8px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #f3e3b5;
+    color: #6b4e00;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .meta {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .date::first-letter {
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 4px 0 16px;
+    font-size: clamp(1.5rem, 5vw, 2.1rem);
+    line-height: 1.2;
+  }
+  .next {
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+</style>
