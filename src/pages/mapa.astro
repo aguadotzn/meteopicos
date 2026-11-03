@@ -1,8 +1,230 @@
 ---
 import Base from '../layouts/Base.astro';
-import ComingSoon from '../components/ComingSoon.astro';
 ---
 
-<Base title="Mapa">
-  <ComingSoon title="Mapa" text="Mapa interactivo con previsión por puntos, refugios, cumbres, radar y webcams. Próximamente." />
+<Base title="Mapa" description="Mapa interactivo de los Picos de Europa: previsión por puntos, refugios, cumbres, radar y webcams.">
+  <section class="map-page">
+    <div class="head">
+      <h1>Mapa</h1>
+      <p class="muted" data-radar-time>Radar: cargando…</p>
+    </div>
+    <div id="map" class="map" role="region" aria-label="Mapa interactivo de los Picos de Europa"></div>
+    <p class="legend muted">
+      <span><i class="dot fc"></i>Previsión</span>
+      <span>🏠 Refugio</span>
+      <span>▲ Cumbre</span>
+      <span>📷 Webcam</span>
+      · Usa el selector de capas (arriba a la derecha) para mostrar el radar de lluvia.
+    </p>
+  </section>
 </Base>
+
+<script>
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
+  import { points } from '../data/zones';
+  import { huts, peaks, webcams, type Place } from '../data/places';
+  import { getForecast } from '../lib/forecast';
+  import { wmo } from '../lib/wmo';
+
+  const fmt = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+  const weekday = new Intl.DateTimeFormat('es-ES', { weekday: 'short', timeZone: 'UTC' });
+  const clock = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+  const map = L.map('map', { zoomControl: true, scrollWheelZoom: true });
+  // Encuadre inicial en los tres macizos; los valles quedan en los bordes.
+  const massifs = points.filter((p) => p.zone !== 'valles');
+  map.fitBounds(L.latLngBounds(massifs.map((p) => [p.lat, p.lon])), { padding: [8, 8] });
+
+  const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    maxZoom: 17,
+    attribution:
+      'Datos © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, SRTM · Estilo © <a href="https://opentopomap.org">OpenTopoMap</a> (CC BY-SA)',
+  }).addTo(map);
+  const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  });
+
+  const icon = (html: string, className: string) =>
+    L.divIcon({ html, className: `mk ${className}`, iconSize: undefined, iconAnchor: [14, 14] });
+
+  const placeLayer = (places: Place[], glyph: string, className: string, popup: (p: Place) => string) =>
+    L.layerGroup(
+      places.map((p) => L.marker([p.lat, p.lon], { icon: icon(glyph, className), title: p.name }).bindPopup(popup(p))),
+    );
+
+  const altText = (p: Place) => (p.altitude ? `${fmt.format(p.altitude)} m` : '');
+
+  const hutsLayer = placeLayer(huts, '🏠', 'hut', (p) =>
+    `<b>${p.name}</b><br>${altText(p)}${p.url ? `<br><a href="${p.url}" target="_blank" rel="noopener">Web del refugio</a>` : ''}`,
+  ).addTo(map);
+
+  const peaksLayer = placeLayer(peaks, '▲', 'peak', (p) =>
+    `<b>${p.name}</b><br>${altText(p)}${p.note ? `<br><span class="muted">${p.note}</span>` : ''}`,
+  ).addTo(map);
+
+  const camsLayer = placeLayer(webcams, '📷', 'cam', (p) =>
+    `<b>${p.name}</b><br><a href="${p.url}" target="_blank" rel="noopener">Ver webcam en directo ↗</a><br><span class="muted">Webcams de Asturias</span>`,
+  ).addTo(map);
+
+  const forecastLayer = L.layerGroup().addTo(map);
+
+  const overlays: Record<string, L.Layer> = {
+    'Previsión por puntos': forecastLayer,
+    Refugios: hutsLayer,
+    Cumbres: peaksLayer,
+    Webcams: camsLayer,
+  };
+  const control = L.control.layers({ 'Topográfico': topo, OpenStreetMap: osm }, overlays, { collapsed: true }).addTo(map);
+
+  async function addForecast() {
+    try {
+      const forecast = await getForecast(points);
+      for (const pf of forecast.points) {
+        const [today] = pf.days;
+        const w = wmo(today.code);
+        const rows = pf.days
+          .slice(0, 3)
+          .map((d, i) => {
+            const dw = wmo(d.code);
+            const label = i === 0 ? 'Hoy' : weekday.format(new Date(`${d.date}T12:00:00Z`));
+            return `<tr><th>${label}</th><td>${dw.icon}</td><td><b>${Math.round(d.tMax)}°</b>/${Math.round(d.tMin)}°</td><td class="pp">${d.precipProb}%</td><td>${d.snow >= 0.5 ? `❄ ${Math.round(d.snow)} cm` : ''}</td></tr>`;
+          })
+          .join('');
+        L.marker([pf.point.lat, pf.point.lon], {
+          icon: icon(`<span>${w.icon}</span><b>${Math.round(today.tMax)}°</b>`, 'fc'),
+          title: pf.point.name,
+          zIndexOffset: 1000,
+        })
+          .bindPopup(
+            `<b>${pf.point.name}</b> · ${fmt.format(pf.point.altitude)} m<table class="pop">${rows}</table><span class="muted">Open-Meteo</span>`,
+          )
+          .addTo(forecastLayer);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // RainViewer: último fotograma de radar y de satélite infrarrojo (nubes).
+  async function addRainViewer() {
+    const label = document.querySelector('[data-radar-time]')!;
+    try {
+      const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+      const data = await res.json();
+      const radar = data.radar?.past?.at(-1);
+      const sat = data.satellite?.infrared?.at(-1);
+      const opts = { opacity: 0.6, maxNativeZoom: 7, maxZoom: 17, attribution: '<a href="https://www.rainviewer.com/">RainViewer</a>' };
+      if (radar) {
+        control.addOverlay(L.tileLayer(`${data.host}${radar.path}/256/{z}/{x}/{y}/2/1_1.png`, opts), 'Radar de lluvia');
+        label.textContent = `Radar: ${clock.format(radar.time * 1000)} · RainViewer`;
+      }
+      if (sat) control.addOverlay(L.tileLayer(`${data.host}${sat.path}/256/{z}/{x}/{y}/0/0_0.png`, opts), 'Nubes (satélite IR)');
+    } catch (err) {
+      console.error(err);
+      label.textContent = 'Radar no disponible ahora mismo';
+    }
+  }
+
+  addForecast();
+  addRainViewer();
+</script>
+
+<style>
+  .map-page {
+    padding: 24px 0 0;
+    display: grid;
+    gap: 12px;
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+  }
+  .head p {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+  .map {
+    height: min(72svh, 640px);
+    min-height: 380px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    z-index: 0;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+  .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+  }
+  .dot.fc {
+    background: var(--accent);
+  }
+
+  /* Marcadores (divIcon) y popups: los crea Leaflet fuera del ámbito del componente */
+  :global(.mk) {
+    background: none;
+    border: 0;
+  }
+  :global(.mk.fc) {
+    display: flex !important;
+    align-items: center;
+    gap: 2px;
+    width: auto !important;
+    height: auto !important;
+    padding: 2px 6px 2px 4px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    color: var(--text);
+    font: 600 12px/1.2 var(--font);
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  }
+  :global(.mk.hut),
+  :global(.mk.cam) {
+    font-size: 18px;
+    line-height: 1;
+  }
+  :global(.mk.peak) {
+    color: #7a4b2a;
+    font-size: 16px;
+    line-height: 1;
+    text-shadow: 0 0 2px #fff;
+  }
+  :global(.leaflet-popup-content) {
+    font: 13px/1.4 var(--font);
+  }
+  :global(.pop) {
+    border-collapse: collapse;
+    margin: 6px 0;
+  }
+  :global(.pop th),
+  :global(.pop td) {
+    padding: 2px 6px 2px 0;
+    text-align: left;
+  }
+  :global(.pop th) {
+    text-transform: capitalize;
+  }
+  :global(.pop .pp) {
+    color: var(--sky);
+  }
+</style>

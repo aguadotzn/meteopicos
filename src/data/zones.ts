@@ -31,12 +31,12 @@ export const zones: Zone[] = [
 export const points: Point[] = [
   // Cornión
   { id: 'lagos', name: 'Lagos de Covadonga', zone: 'cornion', level: 'media', lat: 43.271, lon: -4.9925, altitude: 1070 },
-  { id: 'vegarredonda', name: 'Refugio de Vegarredonda', zone: 'cornion', level: 'alta', lat: 43.2367, lon: -4.984, altitude: 1410 },
+  { id: 'vegarredonda', name: 'Refugio de Vegarredonda', zone: 'cornion', level: 'alta', lat: 43.2344, lon: -4.9929, altitude: 1460 },
 
   // Urrieles
   { id: 'bulnes', name: 'Bulnes', zone: 'urrieles', level: 'valle', lat: 43.2351, lon: -4.8201, altitude: 655 },
   { id: 'sotres', name: 'Sotres', zone: 'urrieles', level: 'media', lat: 43.233, lon: -4.749, altitude: 1047 },
-  { id: 'urriellu', name: 'Refugio de Urriellu', zone: 'urrieles', level: 'alta', lat: 43.204, lon: -4.811, altitude: 1960 },
+  { id: 'urriellu', name: 'Refugio de Urriellu', zone: 'urrieles', level: 'alta', lat: 43.2027, lon: -4.8213, altitude: 1953 },
   { id: 'fuente-de', name: 'Fuente Dé', zone: 'urrieles', level: 'media', lat: 43.1452, lon: -4.8105, altitude: 1078 },
   { id: 'el-cable', name: 'El Cable (teleférico)', zone: 'urrieles', level: 'alta', lat: 43.161, lon: -4.802, altitude: 1834 },
 

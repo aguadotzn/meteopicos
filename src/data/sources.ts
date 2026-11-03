@@ -31,8 +31,19 @@ export const sources: Source[] = [
     license: 'ODbL',
   },
   {
+    name: 'OpenTopoMap',
+    url: 'https://opentopomap.org/',
+    use: 'Mapa topográfico',
+    license: 'CC BY-SA',
+  },
+  {
     name: 'RainViewer',
     url: 'https://www.rainviewer.com/',
-    use: 'Radar de precipitación',
+    use: 'Radar de precipitación y satélite',
+  },
+  {
+    name: 'Webcams de Asturias',
+    url: 'https://www.webcamsdeasturias.com/',
+    use: 'Webcams enlazadas en el mapa',
   },
 ];
