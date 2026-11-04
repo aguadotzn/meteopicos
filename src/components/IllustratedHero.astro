@@ -112,7 +112,7 @@ const isoDefault = 2000;
 
   const m = new Intl.NumberFormat('es-ES', { useGrouping: 'always', maximumFractionDigits: 0 });
   const weekdayLong = new Intl.DateTimeFormat('es-ES', { weekday: 'long', timeZone: 'UTC' });
-  const longDate = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', timeZone: 'UTC' });
+  const longDate = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
   const r = Math.round;
   const asDate = (iso: string) => new Date(`${iso}T12:00:00Z`);
   const meters = (v: number | null) => (v == null ? '—' : `${m.format(r(v / 100) * 100)} m`);
@@ -193,7 +193,8 @@ const isoDefault = 2000;
         const valleyCode = today ? nowCode : valley.code;
 
         root.dataset.sky = skyFor(valleyCode, today ? isDay : true);
-        $('[data-date]').textContent = today ? `${cap(longDate.format(asDate(d.date)))}, ahora` : cap(longDate.format(asDate(d.date)));
+        // «miércoles, 4 de noviembre» → «Miércoles 4 de noviembre»
+        $('[data-date]').textContent = cap(longDate.format(asDate(d.date)).replace(',', ''));
         $('[data-phrase]').textContent = phrase(valleyCode, top, highProb);
 
         $('[data-k-valley-label]').textContent = today ? 'Valles · ahora' : 'Valles · máx.';
