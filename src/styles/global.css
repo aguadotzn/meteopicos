@@ -1,32 +1,42 @@
-/* Paleta de cielo: azules de altura, blancos fríos y gris roca */
+/* Paleta cálida inspirada en el mosaico geométrico: crema, marrón, terracota, mostaza y salvia.
+   Contrastes comprobados (texto ≥ 4,5:1) en modo claro y oscuro. */
 :root {
-  --bg: #f3f6f9;
-  --surface: #ffffff;
-  --text: #142433;
-  --muted: #526476;
-  --border: #dce4ec;
-  --accent: #1f5f99;
-  --accent-soft: #e3eef8;
-  --sky: #2b6cb0;
+  --bg: #f4ead2;
+  --surface: #fbf5e6;
+  --text: #3a2416;
+  --muted: #6b5444;
+  --border: #e2d3b3;
+  --accent: #a8401b;
+  --accent-soft: #f6dccd;
+  --sky: #3d6b45;
 
-  --radius: 12px;
+  /* Teselas e ilustración (mismos valores en ambos modos) */
+  --mustard: #f2c230;
+  --sage: #7fb87a;
+  --olive: #8a9a2e;
+  --terracotta: #e0612b;
+  --terracotta-dark: #c25627;
+  --tan: #d4a96a;
+  --brown: #3a2416;
+  --cream: #f4ead2;
+
+  --radius: 6px;
   --gutter: 16px;
   --max: 1080px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  /* Titulares: la misma sans, más gruesa y apretada */
   --display: var(--font);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0d141b;
-    --surface: #141e28;
-    --text: #e6eef5;
-    --muted: #97a8b8;
-    --border: #243241;
-    --accent: #7db5e8;
-    --accent-soft: #182a3b;
-    --sky: #8cc4f2;
+    --bg: #1e1611;
+    --surface: #2a2019;
+    --text: #f4ead2;
+    --muted: #c4ad93;
+    --border: #3d2f25;
+    --accent: #f08a5d;
+    --accent-soft: #3a2418;
+    --sky: #9fd19a;
   }
 }
 
