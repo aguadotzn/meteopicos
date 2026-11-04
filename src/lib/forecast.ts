@@ -16,6 +16,8 @@ export interface Day {
 
 // Condiciones en el momento de la consulta (para el cielo de la portada).
 export interface Current {
+  /** Hora local a la que se refieren los datos (AAAA-MM-DDTHH:MM) */
+  time: string;
   temp: number;
   code: number;
   isDay: boolean;
@@ -34,7 +36,7 @@ export interface Forecast {
 
 const API = 'https://api.open-meteo.com/v1/forecast';
 const DAYS = 6;
-const CACHE_KEY = 'meteopicos:forecast:v2';
+const CACHE_KEY = 'meteopicos:forecast:v3';
 const CACHE_MS = 30 * 60 * 1000;
 
 const DAILY = [
@@ -51,7 +53,7 @@ const DAILY = [
 interface ApiLocation {
   daily: Record<string, (number | null)[]> & { time: string[] };
   hourly: { time: string[]; freezing_level_height: (number | null)[] };
-  current?: { temperature_2m: number; weather_code: number; is_day: number };
+  current?: { time: string; temperature_2m: number; weather_code: number; is_day: number };
 }
 
 // Media diurna (8–20 h) de la isoterma de 0 °C para cada día.
@@ -75,7 +77,7 @@ function parse(data: ApiLocation | ApiLocation[]): Parsed[] {
     const d = loc.daily;
     const num = (key: string, j: number) => d[key]?.[j] ?? 0;
     const c = loc.current;
-    const current = c && { temp: c.temperature_2m, code: c.weather_code, isDay: c.is_day === 1 };
+    const current = c && { time: c.time, temp: c.temperature_2m, code: c.weather_code, isDay: c.is_day === 1 };
     const days = d.time.map((date, j) => ({
       date,
       code: num('weather_code', j),
