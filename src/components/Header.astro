@@ -1,4 +1,9 @@
 ---
+interface Props {
+  /** Transparente y en blanco, superpuesta al hero de la portada */
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const links = [
   { href: `${base}/prevision`, label: 'Previsión' },
@@ -12,7 +17,7 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isCurrent = (href: string) => current === href || current.startsWith(`${href}/`);
 ---
 
-<header class="site-header">
+<header class:list={["site-header", { overlay }]}>
   <div class="container bar">
     <a class="brand" href={`${base}/`} aria-label="Meteo Picos de Europa, inicio">
       <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
@@ -65,10 +70,10 @@ const isCurrent = (href: string) => current === href || current.startsWith(`${hr
     color: var(--accent);
   }
   .name {
-    font-family: var(--serif);
-    font-weight: 700;
-    font-size: 1.15rem;
-    letter-spacing: -0.01em;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
   }
   ul {
     display: flex;
@@ -94,6 +99,30 @@ const isCurrent = (href: string) => current === href || current.startsWith(`${hr
     color: var(--text);
     font-weight: 600;
     border-bottom-color: var(--accent);
+  }
+  .overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom-color: rgb(255 255 255 / 0.18);
+  }
+  .overlay .brand,
+  .overlay .brand svg,
+  .overlay nav a,
+  .overlay nav a:hover,
+  .overlay nav a[aria-current='page'] {
+    color: #fff;
+  }
+  .overlay nav a {
+    opacity: 0.85;
+  }
+  .overlay nav a:hover {
+    opacity: 1;
+  }
+  .overlay .brand svg path + path {
+    display: none;
   }
   @media (max-width: 480px) {
     .bar {

@@ -14,9 +14,17 @@ export interface Day {
   freezingLevel: number | null;
 }
 
+// Condiciones en el momento de la consulta (para el cielo de la portada).
+export interface Current {
+  temp: number;
+  code: number;
+  isDay: boolean;
+}
+
 export interface PointForecast {
   point: Point;
   days: Day[];
+  current?: Current;
 }
 
 export interface Forecast {
@@ -26,7 +34,7 @@ export interface Forecast {
 
 const API = 'https://api.open-meteo.com/v1/forecast';
 const DAYS = 6;
-const CACHE_KEY = 'meteopicos:forecast:v1';
+const CACHE_KEY = 'meteopicos:forecast:v2';
 const CACHE_MS = 30 * 60 * 1000;
 
 const DAILY = [
@@ -43,6 +51,7 @@ const DAILY = [
 interface ApiLocation {
   daily: Record<string, (number | null)[]> & { time: string[] };
   hourly: { time: string[]; freezing_level_height: (number | null)[] };
+  current?: { temperature_2m: number; weather_code: number; is_day: number };
 }
 
 // Media diurna (8–20 h) de la isoterma de 0 °C para cada día.
@@ -55,12 +64,19 @@ function dailyFreezing(hourly: ApiLocation['hourly'], date: string): number | nu
   return values.reduce((a, b) => a + b, 0) / values.length;
 }
 
-function parseDays(data: ApiLocation | ApiLocation[]): Day[][] {
+interface Parsed {
+  days: Day[];
+  current?: Current;
+}
+
+function parse(data: ApiLocation | ApiLocation[]): Parsed[] {
   const locations = Array.isArray(data) ? data : [data];
   return locations.map((loc) => {
     const d = loc.daily;
     const num = (key: string, j: number) => d[key]?.[j] ?? 0;
-    return d.time.map((date, j) => ({
+    const c = loc.current;
+    const current = c && { temp: c.temperature_2m, code: c.weather_code, isDay: c.is_day === 1 };
+    const days = d.time.map((date, j) => ({
       date,
       code: num('weather_code', j),
       tMax: num('temperature_2m_max', j),
@@ -72,6 +88,7 @@ function parseDays(data: ApiLocation | ApiLocation[]): Day[][] {
       windDir: num('wind_direction_10m_dominant', j),
       freezingLevel: dailyFreezing(loc.hourly, date),
     }));
+    return { days, current };
   });
 }
 
@@ -82,19 +99,20 @@ export interface Spot {
 }
 
 // Una petición a Open-Meteo para varios puntos a la vez.
-async function request(spots: Spot[], days: number): Promise<Day[][]> {
+async function request(spots: Spot[], days: number): Promise<Parsed[]> {
   const params = new URLSearchParams({
     latitude: spots.map((p) => p.lat).join(','),
     longitude: spots.map((p) => p.lon).join(','),
     elevation: spots.map((p) => p.altitude).join(','),
     daily: DAILY,
     hourly: 'freezing_level_height',
+    current: 'temperature_2m,weather_code,is_day',
     timezone: 'Europe/Madrid',
     forecast_days: String(days),
   });
   const res = await fetch(`${API}?${params}`);
   if (!res.ok) throw new Error(`Open-Meteo ${res.status}`);
-  return parseDays(await res.json());
+  return parse(await res.json());
 }
 
 function readCache(): Forecast | null {
@@ -124,8 +142,8 @@ export async function getForecast(points: Point[]): Promise<Forecast> {
     return cached;
   }
 
-  const days = await request(points, DAYS);
-  const forecast: Forecast = { fetchedAt: Date.now(), points: points.map((point, i) => ({ point, days: days[i] })) };
+  const parsed = await request(points, DAYS);
+  const forecast: Forecast = { fetchedAt: Date.now(), points: points.map((point, i) => ({ point, ...parsed[i] })) };
   writeCache(forecast);
   return forecast;
 }
@@ -135,7 +153,7 @@ const spotCache = new Map<string, Promise<Day[]>>();
 export function getSpotForecast(spot: Spot, days = 3): Promise<Day[]> {
   const key = `${spot.lat},${spot.lon},${spot.altitude},${days}`;
   if (!spotCache.has(key)) {
-    const p = request([spot], days).then((r) => r[0]);
+    const p = request([spot], days).then((r) => r[0].days);
     p.catch(() => spotCache.delete(key));
     spotCache.set(key, p);
   }

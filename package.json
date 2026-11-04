@@ -12,7 +12,6 @@
     "picos:osm": "node scripts/picos-osm.ts"
   },
   "dependencies": {
-    "@fontsource-variable/source-serif-4": "^5.3.1",
     "astro": "^7.4.5",
     "leaflet": "^1.9.4",
     "maplibre-gl": "^6.16.0"
